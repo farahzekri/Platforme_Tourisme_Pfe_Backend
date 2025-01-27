@@ -8,6 +8,7 @@ const adminSchema = new mongoose.Schema(
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         role: { type: String, enum: ['admin', 'superadmin'], required: true },
+        privilege: { type: String, required: true },
     },
     { timestamps: true }
 );

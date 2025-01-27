@@ -6,7 +6,7 @@ const asyncHandler = require('express-async-handler')
 
 
 const generateAccessToken = (user,collection) => {
-    const accessTokenPayload = {id: user._id, email: user.email, collection};
+    const accessTokenPayload = {id: user._id, email: user.email, collection,role:user.role};
     return jwt.sign(accessTokenPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 };
 const generateRefreshToken = (user, collection) => {
@@ -54,6 +54,7 @@ const login = asyncHandler(async (req, res) => {
         email: foundUser.email,
         name: foundUser.username || foundUser.nameAgence, 
         statue:foundUser.status,
+        role:foundUser.role,
     });
 });
 
@@ -86,6 +87,7 @@ const refresh = asyncHandler(async (req, res) => {
             email: user.email,
             name: user.username || user.nameAgence,
             status: user.status,
+            role:user.role,
         });
     });
 });

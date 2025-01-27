@@ -30,8 +30,8 @@ app.use((req, res, next) => {
 
 
 app.use('/auth', authRoutes);
-app.use('/agence',Userouter)
-app.use('/admin',adminrouter)
+app.use('/agence',Userouter);
+app.use('/admin',adminrouter);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
