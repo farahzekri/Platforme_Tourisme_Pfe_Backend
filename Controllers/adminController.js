@@ -50,7 +50,60 @@ const getAllAdmin = async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la récupération des admins.' });
     }
 };
+const deleteAdmin = async (req, res) => {
+    try {
+        const { username } = req.params;  // Get username from params
+        
+        if (req.user.role !== 'superadmin') {
+            return res.status(403).json({ message: 'Access denied. Only superadmin can delete admins.' });
+        }
+
+        // Corrected query to find by username
+        const adminToDelete = await Admin.findOne({ username });  
+        if (!adminToDelete) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        // Corrected to use username in the delete operation
+        await Admin.findOneAndDelete({ username });
+
+        res.status(200).json({ message: 'Admin deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+const updateAdmin = async (req, res) => {
+    try {
+        const { currentUsername } = req.params; 
+        const { newUsername, newEmail } = req.body; 
+
+  
+        const admin = await Admin.findOne({ username: currentUsername });
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+       
+        admin.username = newUsername || admin.username;
+        admin.email = newEmail || admin.email;
+
+        
+        await admin.save();
+
+        res.status(200).json({ message: 'Admin updated successfully', admin });
+    } catch (error) {
+        if (error.code === 11000) {
+          
+            return res.status(400).json({ message: 'Username or email already exists' });
+        }
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 module.exports={
     createAdmin,
     getAllAdmin,
+    deleteAdmin,
+    updateAdmin,
 }
