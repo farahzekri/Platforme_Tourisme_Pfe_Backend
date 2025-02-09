@@ -101,9 +101,26 @@ const updateAdmin = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+const countAdmins = async (req, res) => {
+    try {
+        const totalAdmins = await Admin.countDocuments();
+
+        // Calcul du mois dernier
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+        const newAdmins = await Admin.countDocuments({ createdAt: { $gte: lastMonth } });
+
+        res.status(200).json({ totalAdmins, newAdmins });
+    } catch (error) {
+        console.error("Erreur lors du comptage des administrateurs:", error);
+        res.status(500).json({ message: "Erreur lors du comptage des administrateurs." });
+    }
+};
 module.exports={
     createAdmin,
     getAllAdmin,
     deleteAdmin,
     updateAdmin,
+    countAdmins,
 }

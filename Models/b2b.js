@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-// Schéma pour les utilisateurs B2B
+
 const b2bSchema = new mongoose.Schema(
     {
         nameAgence: { type: String, required: true },
@@ -13,6 +13,13 @@ const b2bSchema = new mongoose.Schema(
         documents: { type: [String], required: true }, 
         status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }, 
         typeAgence: { type: String, required: true }, 
+        contract: {
+            startDate: { type: Date },
+            endDate: { type: Date},
+            duration: { type: String}, 
+            amount: { type: Number },
+            contractFile: { type: String } 
+        }
     },
     { timestamps: true }
 );

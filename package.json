@@ -23,6 +23,8 @@
     "express-rate-limit": "^7.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
+    "nodemailer": "^6.10.0",
+    "pdfkit": "^0.16.0",
     "uuid": "^11.0.5"
   },
   "devDependencies": {
