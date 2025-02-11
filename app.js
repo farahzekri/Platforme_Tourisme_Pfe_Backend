@@ -6,6 +6,7 @@ const {logger} = require('./middleware/logger')
 const authRoutes = require('./Routes/authRoutes');
 const  Userouter =require('./Routes/Userouter');
 const adminrouter=require('./Routes/adminRouter')
+const historyrouter=require('./Routes/HistoriqueRouter');
 const cors = require('cors');
 const app = express();
 app.use(express.json()); 
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 app.use('/auth', authRoutes);
 app.use('/agence',Userouter);
 app.use('/admin',adminrouter);
+app.use('/History',historyrouter);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -1,6 +1,7 @@
 
 const bcrypt = require('bcrypt');
 const B2B = require('../Models/b2b');
+const History =require('../Models/Historique');
 const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
@@ -179,7 +180,6 @@ const registerUser = async (req, res) => {
     try {
         const { nameAgence, email, password, phoneNumber, address, city, country, documents, typeAgence } = req.body;
 
-
         if (!nameAgence || !email || !password || !phoneNumber || !address || !city || !country || !documents || !typeAgence) {
             return res.status(400).json({ error: 'Tous les champs sont requis.' });
         }
@@ -188,7 +188,6 @@ const registerUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: 'Un utilisateur avec cet email existe déjà.' });
         }
-
 
         const newb2b = new B2B({
             nameAgence,
@@ -200,12 +199,30 @@ const registerUser = async (req, res) => {
             country,
             documents,
             typeAgence,
-
         });
 
         await newb2b.save();
-        sendEmailRegistre(email, { nameAgence })
-        res.status(201).json({ message: 'Agence enregistrée avec succès.' });
+
+        sendEmailRegistre(email, { nameAgence });
+
+        console.log('req.user.id:', req.user.id);
+
+        const history = new History({
+            admin: req.user.id,  
+            action: 'Ajout Agence',
+            details: `L'agence ${nameAgence} a été ajoutée par ${req.user.username}`,
+        });
+
+        await history.save();
+
+
+        const populatedHistory = await History.findOne({ _id: history._id }).populate('admin', 'username');
+
+        res.status(201).json({
+            message: 'Agence enregistrée avec succès.',
+            history: populatedHistory, 
+        });
+
     } catch (error) {
         console.error('Error during registration:', error);
 
@@ -262,7 +279,7 @@ const updateB2BStatus = async (req, res) => {
     try {
         const { nameAgence, status, email, startDate, endDate, duration, amount } = req.body;
 
-        if (req.user.role !== 'superadmin') {
+        if (req.user.role !== 'superadmin' ) {
             return res.status(403).json({ message: 'Forbidden: Insufficient permissions' });
         }
 
