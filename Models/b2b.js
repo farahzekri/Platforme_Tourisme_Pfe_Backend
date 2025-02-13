@@ -11,7 +11,7 @@ const b2bSchema = new mongoose.Schema(
         city: { type: String, required: true },
         country: { type: String, required: true },
         documents: { type: [String], required: true }, 
-        status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }, 
+        status: { type: String, enum: ['en attente', 'approuvée', 'rejetée'], default: 'en attente' }, 
         typeAgence: { type: String, required: true }, 
         contract: {
             startDate: { type: Date },

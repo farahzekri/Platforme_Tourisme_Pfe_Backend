@@ -29,7 +29,14 @@ const createAdmin = async (req, res) => {
             role, 
             privilege,
         });
-        await newAdmin.save();
+        // await newAdmin.save();
+        //     const history = new History({
+        //             admin: req.user.id,  
+        //             action: 'Ajout Admin',
+        //             details: `L'agence ${nameAgence} a été ajoutée par ${req.user.username}`,
+        //         });
+        
+        //         await history.save();
 
         res.status(201).json({ message: 'Admin created successfully', newAdmin });
     } catch (error) {

@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const B2B = require('../Models/b2b');
 const Admin = require('../Models/admin');
+const History =require('../Models/Historique');
 const asyncHandler = require('express-async-handler')
 
 
@@ -47,7 +48,16 @@ const login = asyncHandler(async (req, res) => {
         sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000, 
     });
-
+    try {
+        await History.create({
+            admin: foundUser._id,
+            action: 'Connexion',
+            details: `${foundUser.username || foundUser.nameAgence} s'est connecté(e) à la plateforme.`,
+            date: new Date(),
+        });
+    } catch (error) {
+        console.error('Erreur lors de l’enregistrement de l’historique:', error);
+    }
     return res.json({
         accessToken,
         collection,
@@ -55,6 +65,7 @@ const login = asyncHandler(async (req, res) => {
         name: foundUser.username || foundUser.nameAgence, 
         statue:foundUser.status,
         role:foundUser.role,
+        privilege:foundUser.privilege 
     });
 });
 
@@ -88,6 +99,7 @@ const refresh = asyncHandler(async (req, res) => {
             name: user.username || user.nameAgence,
             status: user.status,
             role:user.role,
+            privilege:user.privilege 
         });
     });
 });

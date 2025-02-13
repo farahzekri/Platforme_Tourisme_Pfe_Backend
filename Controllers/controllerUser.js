@@ -205,33 +205,64 @@ const registerUser = async (req, res) => {
 
         sendEmailRegistre(email, { nameAgence });
 
-        console.log('req.user.id:', req.user.id);
+        res.status(201).json({ message: 'Agence enregistrée avec succès.' });
 
+    } catch (error) {
+        console.error('Error during registration:', error);
+        res.status(500).json({ error: 'Erreur interne du serveur.' });
+    }
+};
+const addAgence = async (req, res) => {
+    try {
+        const { nameAgence, email, password, phoneNumber, address, city, country, documents, typeAgence } = req.body;
+
+        if (!nameAgence || !email || !password || !phoneNumber || !address || !city || !country || !documents || !typeAgence) {
+            return res.status(400).json({ error: 'Tous les champs sont requis.' });
+        }
+
+        const existingUser = await B2B.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Un utilisateur avec cet email existe déjà.' });
+        }
+
+        const newb2b = new B2B({
+            nameAgence,
+            email,
+            password,
+            phoneNumber,
+            address,
+            city,
+            country,
+            documents,
+            typeAgence,
+        });
+
+        await newb2b.save();
+
+        sendEmailRegistre(email, { nameAgence });
+
+        // Enregistrer dans l'historique
         const history = new History({
-            admin: req.user.id,  
             action: 'Ajout Agence',
-            details: `L'agence ${nameAgence} a été ajoutée par ${req.user.username}`,
+            details: `L'agence ${nameAgence} a été ajoutée par ${req.user.username}.`,
+            admin: req.user.id,
         });
 
         await history.save();
 
-
-        const populatedHistory = await History.findOne({ _id: history._id }).populate('admin', 'username');
-
-        res.status(201).json({
-            message: 'Agence enregistrée avec succès.',
-            history: populatedHistory, 
+        res.status(201).json({ 
+            message: 'Agence ajoutée avec succès par un administrateur.',
+            history 
         });
 
     } catch (error) {
-        console.error('Error during registration:', error);
-
+        console.error('Error during agency creation:', error);
         res.status(500).json({ error: 'Erreur interne du serveur.' });
     }
 };
 const getAllB2BUsers = async (req, res) => {
     try {
-        const b2bUsers = await B2B.find({ status: 'pending' });
+        const b2bUsers = await B2B.find({ status: 'en attente' });
         res.status(200).json(b2bUsers);
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs B2B.' });
@@ -283,7 +314,7 @@ const updateB2BStatus = async (req, res) => {
             return res.status(403).json({ message: 'Forbidden: Insufficient permissions' });
         }
 
-        if (!['pending', 'approved', 'rejected'].includes(status)) {
+        if (!['en attente', 'approuvée', 'rejetée'].includes(status)) {
             return res.status(400).json({ message: 'Invalid status. Allowed values are "pending", "approved", or "rejected".' });
         }
 
@@ -294,7 +325,7 @@ const updateB2BStatus = async (req, res) => {
 
         b2b.status = status;
 
-        if (status === 'approved') {
+        if (status === 'approuvée') {
             b2b.contract = {
                 startDate,
                 endDate,
@@ -344,7 +375,12 @@ const updateB2b = async (req, res) => {
             agence.contract.contractFile = contract.contractFile || agence.contract.contractFile;
         }
         await agence.save();
-
+        const history = new History({
+            admin: req.user.id,
+            action: 'Mise à jour',
+            details: `L'agence ${nameAgence} a été mise à jour par ${req.user.username}`,
+        });
+        await history.save();
         res.status(200).json({ message: "Agence mise à jour avec succès", agence });
     } catch (error) {
         console.error(error);
@@ -370,7 +406,7 @@ const getB2BByNameAgence = async (req, res) => {
 };
 const getAllB2BUsersAccpe = async (req, res) => {
     try {
-        const b2bUsers = await B2B.find({ status: 'approved' });
+        const b2bUsers = await B2B.find({ status: 'approuvée' });
         res.status(200).json(b2bUsers);
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs B2B.' });
@@ -379,9 +415,9 @@ const getAllB2BUsersAccpe = async (req, res) => {
 const getAgencyStats = async (req, res) => {
     try {
         const totalAgencies = await B2B.countDocuments();
-        const pendingAgencies = await B2B.countDocuments({ status: "pending" });
-        const approvedAgencies = await B2B.countDocuments({ status: "approved" });
-        const rejectedAgencies = await B2B.countDocuments({ status: "rejected" });
+        const pendingAgencies = await B2B.countDocuments({ status: "en attente" });
+        const approvedAgencies = await B2B.countDocuments({ status: "approuvée" });
+        const rejectedAgencies = await B2B.countDocuments({ status: "rejetée" });
 
         // Éviter la division par zéro
         const approvedPercentage = totalAgencies
@@ -402,22 +438,38 @@ const getAgencyStats = async (req, res) => {
         res.status(500).json({ message: "Erreur lors du comptage des agences." });
     }
 };
-const deleteB2b =async (req,res)=>{
-    try{
-        const{nameAgence}=req.params;
-        const b2b = await B2B.findOne({nameAgence});
+const deleteB2b = async (req, res) => {
+    try {
+        const { nameAgence } = req.params;
+        const b2b = await B2B.findOne({ nameAgence });
         if (!b2b) {
-            return res.status(404).json({ message: 'b2b not found' });
+            return res.status(404).json({ message: 'Agence non trouvée' });
         }
-         await B2B.findOneAndDelete({ nameAgence });
-         res.status(200).json({ message: 'b2b deleted successfully' });
-    }catch(error){
+
+        const historyData = {
+            action: 'Suppression',
+            details: `L'agence ${b2b.nameAgence} a été supprimée.`,
+            admin: req.user.id, 
+            date: new Date(),
+            
+        };
+
+        const history = new History(historyData);
+        await history.save();
+
+        // Maintenant, supprimer l'agence
+        await B2B.findOneAndDelete({ nameAgence });
+
+        res.status(200).json({ message: `L'agence ${nameAgence} a été supprimée avec succès.` });
+
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Erreur du serveur' });
     }
-}
+};
 module.exports = {
     registerUser,
+    addAgence,
     getAllB2BUsers,
     updateB2BStatus,
     getB2BByNameAgence,

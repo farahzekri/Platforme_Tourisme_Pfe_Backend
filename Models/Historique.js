@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const historySchema = new mongoose.Schema(
     {
-        admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Admins', required: true }, 
+        admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Admins', required: false }, 
         action: { type: String, required: true },
         details: { type: String, required: true },
         date: { type: Date, default: Date.now } 

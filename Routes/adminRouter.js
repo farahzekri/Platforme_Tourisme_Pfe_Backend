@@ -11,6 +11,6 @@ const router = express.Router();
 router.post('/create' , verifyJWT,checkSuperAdmin,controlleradmin.createAdmin);
 router.get('/getall',verifyJWT,checkSuperAdmin, controlleradmin.getAllAdmin);
 router.delete('/delete/:username', verifyJWT,checkSuperAdmin,controlleradmin.deleteAdmin);
-router.put('/updateuser/:currentUsername',controlleradmin.updateAdmin);
+router.put('/updateuser/:currentUsername',verifyJWT,controlleradmin.updateAdmin);
 router.get('/count', controlleradmin.countAdmins);
 module.exports = router;
