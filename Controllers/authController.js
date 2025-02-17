@@ -65,7 +65,8 @@ const login = asyncHandler(async (req, res) => {
         name: foundUser.username || foundUser.nameAgence, 
         statue:foundUser.status,
         role:foundUser.role,
-        privilege:foundUser.privilege 
+        privilege:foundUser.privilege  || '',
+        typeAgence:foundUser.typeAgence || ''
     });
 });
 
@@ -99,7 +100,8 @@ const refresh = asyncHandler(async (req, res) => {
             name: user.username || user.nameAgence,
             status: user.status,
             role:user.role,
-            privilege:user.privilege 
+            privilege:user.privilege ,
+            typeAgence:user.typeAgence || ''
         });
     });
 });

@@ -19,7 +19,8 @@ const b2bSchema = new mongoose.Schema(
             duration: { type: String}, 
             amount: { type: Number },
             contractFile: { type: String } 
-        }
+        },
+        hotels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hotel" }] 
     },
     { timestamps: true }
 );

@@ -7,6 +7,7 @@ const authRoutes = require('./Routes/authRoutes');
 const  Userouter =require('./Routes/Userouter');
 const adminrouter=require('./Routes/adminRouter')
 const historyrouter=require('./Routes/HistoriqueRouter');
+const hotelrouter =require('./Routes/HotelRouter');
 const cors = require('cors');
 const app = express();
 app.use(express.json()); 
@@ -34,6 +35,7 @@ app.use('/auth', authRoutes);
 app.use('/agence',Userouter);
 app.use('/admin',adminrouter);
 app.use('/History',historyrouter);
+app.use('/hotel',hotelrouter);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
