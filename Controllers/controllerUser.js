@@ -241,7 +241,6 @@ const addAgence = async (req, res) => {
 
         sendEmailRegistre(email, { nameAgence });
 
-        // Enregistrer dans l'historique
         const history = new History({
             action: 'Ajout Agence',
             details: `L'agence ${nameAgence} a été ajoutée par ${req.user.username}.`,
