@@ -61,6 +61,7 @@ const login = asyncHandler(async (req, res) => {
     return res.json({
         accessToken,
         collection,
+        id:foundUser._id,
         email: foundUser.email,
         name: foundUser.username || foundUser.nameAgence, 
         statue:foundUser.status,

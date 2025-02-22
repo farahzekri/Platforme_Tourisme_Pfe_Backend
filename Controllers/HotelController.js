@@ -1,11 +1,18 @@
+
 const Hotel = require('../Models/Hotel');
 const B2B = require('../Models/b2b');
+
 const createHotel =async(req,res)=>{
     try{
-        const {b2bId,name,country,city,stars,Typecontract,minChildAge,maxChildAge,address,tripAdvisorLink,rooms,childrenCategories,options,location,themes,arrangement,amenities,supplements}=req.body
+        const b2bId = req.user.id; 
+
         if (!b2bId) {
-            return res.status(400).json({ message: "L'ID du B2B est requis." });
-          }
+            return res.status(403).json({ message: "Accès non autorisé. B2B non trouvé." });
+        }
+        const {name,country,city,stars,Typecontract,minChildAge,maxChildAge,address,tripAdvisorLink,rooms,childrenCategories,options,location,themes,arrangement,amenities,supplements,Jourdeweekend,image}=req.body
+        
+       
+    
           const newHotel = new Hotel({
             b2bId,
             name,
@@ -24,7 +31,9 @@ const createHotel =async(req,res)=>{
             themes,
             arrangement,
             amenities,
-            supplements
+            supplements,
+            Jourdeweekend,
+            image,
           });
       
          
@@ -49,19 +58,22 @@ const getAllHotels = async (req, res) => {
 };
 const getHotelsByB2B = async (req, res) => {
     try {
-        const { b2bId } = req.params;
-        const hotels = await Hotel.find({ b2bId });
+        const b2bId = req.user.id;
 
+        if (!b2bId) {
+            return res.status(401).json({ message: "Utilisateur non autorisé." });
+        }
+        const hotels = await Hotel.find({ b2bId });
         if (!hotels.length) {
             return res.status(404).json({ message: "Aucun hôtel trouvé pour ce B2B." });
         }
-
         res.status(200).json(hotels);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Erreur lors de la récupération des hôtels du B2B." });
     }
 };
+
 const updateHotel = async (req, res) => {
     try {
         const { id } = req.params;

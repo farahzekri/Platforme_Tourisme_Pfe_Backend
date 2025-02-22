@@ -20,6 +20,8 @@ const hotelSchema = new mongoose.Schema(
     arrangement: { type: [String], enum: ["logement simple", "petit déjeuner", "demi-pension", "pension complète", "all inclusive"] },
     amenities: [{ type: String }], 
     supplements: [{ type: String }], 
+    Jourdeweekend:[{ type: String }],
+    image:[{ type: String }],
    
   },
   { timestamps: true }
