@@ -22,7 +22,7 @@ const hotelSchema = new mongoose.Schema(
     supplements: [{ type: String }], 
     Jourdeweekend:[{ type: String }],
     image:[{ type: String }],
-   
+    periodes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Periode" }] 
   },
   { timestamps: true }
 );

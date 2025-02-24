@@ -100,16 +100,29 @@ const deleteHotel = async (req, res) => {
             return res.status(404).json({ message: "Hôtel non trouvé." });
         }
 
-       
+        await B2B.findByIdAndUpdate(hotel.b2bId, { $pull: { hotels: id } });
         await Hotel.findByIdAndDelete(id);
 
-      
-        await B2B.findByIdAndUpdate(hotel.b2bId, { $pull: { hotels: id } });
 
         res.status(200).json({ message: "Hôtel supprimé avec succès." });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Erreur lors de la suppression de l'hôtel." });
+    }
+};
+const getHotelByHotelid = async (req, res) => {
+    try {
+        // const Hotelid = req.params;
+
+        const hotel = await Hotel.findById(req.params.id);
+        if (!hotel) {
+            return res.status(404).json({ message: "Hôtel non trouvé" });
+        }
+       
+        res.status(200).json(hotel);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erreur lors de la récupération de hôtels." });
     }
 };
 module.exports={
@@ -118,5 +131,6 @@ module.exports={
     getHotelsByB2B,
     updateHotel,
     deleteHotel,
+    getHotelByHotelid,
     
 }

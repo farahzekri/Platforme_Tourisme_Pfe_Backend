@@ -8,6 +8,7 @@ const  Userouter =require('./Routes/Userouter');
 const adminrouter=require('./Routes/adminRouter')
 const historyrouter=require('./Routes/HistoriqueRouter');
 const hotelrouter =require('./Routes/HotelRouter');
+const perioderouter =require('./Routes/PeriodeHotel');
 const cors = require('cors');
 const app = express();
 app.use(express.json()); 
@@ -36,6 +37,7 @@ app.use('/agence',Userouter);
 app.use('/admin',adminrouter);
 app.use('/History',historyrouter);
 app.use('/hotel',hotelrouter);
+app.use('/periode',perioderouter);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
