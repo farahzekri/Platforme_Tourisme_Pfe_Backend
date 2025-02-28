@@ -22,7 +22,9 @@ const hotelSchema = new mongoose.Schema(
     supplements: [{ type: String }], 
     Jourdeweekend:[{ type: String }],
     image:[{ type: String }],
-    periodes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Periode" }] 
+    periodes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Periode" }] ,
+    prixTotal: { type: Number, default: 0 }, 
+    status: { type: String, enum: ["inactive", "active"], default: "inactive" } 
   },
   { timestamps: true }
 );

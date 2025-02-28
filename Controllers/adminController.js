@@ -29,7 +29,7 @@ const createAdmin = async (req, res) => {
             role, 
             privilege,
         });
-        // await newAdmin.save();
+         await newAdmin.save();
         //     const history = new History({
         //             admin: req.user.id,  
         //             action: 'Ajout Admin',

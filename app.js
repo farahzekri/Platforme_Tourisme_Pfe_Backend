@@ -19,17 +19,13 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.error('Erreur de connexion à MongoDB:', err));
 
   app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
+    origin: "http://localhost:3000", // Spécifie le frontend
+    credentials: true, // Autorise l'envoi des cookies et headers d'authentification
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    next();
-});
+
 
 
 app.use('/auth', authRoutes);

@@ -11,8 +11,8 @@ const periodeSchema = new mongoose.Schema(
     delai_retrocession :{type: String},
     prixWeekday: { type: Number, required: true },
     prixWeekend: { type: Number, required: true },
-    DCR :{type: Date, required: true},
-    DMJ :{type: Date, required: true},
+    pourcentageSupplementSingle: { type: Number}, 
+    pourcentageSupplementSingleWeekend: { type: Number}, 
     supplementsPrix: [{
       supplement: { type: String },
       prix: { type: Number, required: true }
