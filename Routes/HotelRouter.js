@@ -11,4 +11,5 @@ router.get('/gethotelbyid',verifyJWT,HotelController.getHotelsByB2B);
 router.put('/upadehotel/:id',HotelController.updateHotel);
 router.delete('/delete/:id',HotelController.deleteHotel);
 router.get('/gethotelbyidhotel/:id',HotelController.getHotelByHotelid);
+router.put('/updatedesponibilite/:id',HotelController.updateavailebelRoom);
 module.exports=router;

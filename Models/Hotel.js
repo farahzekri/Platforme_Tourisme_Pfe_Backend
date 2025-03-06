@@ -24,7 +24,12 @@ const hotelSchema = new mongoose.Schema(
     image:[{ type: String }],
     periodes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Periode" }] ,
     prixTotal: { type: Number, default: 0 }, 
-    status: { type: String, enum: ["inactive", "active"], default: "inactive" } 
+    status: { type: String, enum: ["inactive", "active"], default: "inactive" } ,
+    roomAvailability: { 
+      type: Map, 
+      of: Number,  
+      default: {}  
+  }
   },
   { timestamps: true }
 );

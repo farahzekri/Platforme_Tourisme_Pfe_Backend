@@ -132,9 +132,183 @@ const getAllPeriodeByHotelid=async(req,res)=>{
     }catch (error) {
         console.error("Erreur lors de la récupération des périodes :", error);
         res.status(500).json({ message: "Erreur serveur" });
-}}
+}};
+
+const getHotelsetprixmin = async (req, res) => {
+    try {
+        // Date actuelle
+        const today = new Date();
+        console.log("Date d'aujourd'hui :", today);
+
+        // Récupérer les hôtels actifs
+        const hotels = await Hotel.find({ status: "active" });
+
+        // Vérifier si des hôtels sont trouvés
+        if (!hotels.length) {
+            return res.json({ message: "Aucun hôtel actif trouvé" });
+        }
+
+        // Parcourir chaque hôtel et chercher la période active
+        const hotelsWithPrice = await Promise.all(
+            hotels.map(async (hotel) => {
+                console.log(`Recherche de période pour l'hôtel : ${hotel.name}`);
+
+                // Trouver la période active
+                const periode = await Periode.findOne({
+                    hotelId: hotel._id,
+                    dateDebut: { $lte: today },
+                    dateFin: { $gte: today },
+                });
+
+                if (!periode) {
+                    console.log(`❌ Aucune période trouvée pour l'hôtel : ${hotel.name}`);
+                    return null;
+                }
+
+                // Récupérer le prix de l'arrangement "petit déjeuner"
+                const petitDej = periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner");
+                const prixPetitDej = petitDej ? petitDej.prix : 0;
+
+                console.log(`✅ Période trouvée pour ${hotel.name} - Prix weekday: ${periode.prixWeekday}, weekend: ${periode.prixWeekend}`);
+
+                // Retourner les informations formatées
+                return {
+                    id:hotel.id,
+                    name: hotel.name,
+                    stars: hotel.stars,
+                    country: hotel.country,
+                    city: hotel.city,
+                    arrangement:hotel.arrangement,
+                    supplements:hotel.supplements,
+                    image:hotel.image,
+                    prixMinWeekday: periode.prixWeekday + prixPetitDej,
+                    prixMinWeekend: periode.prixWeekend + prixPetitDej,
+                };
+            })
+        );
+
+        // Filtrer les hôtels qui n'ont pas de période
+        const filteredHotels = hotelsWithPrice.filter(h => h !== null);
+
+        if (!filteredHotels.length) {
+            return res.json({ message: "Aucun hôtel avec une période active trouvée" });
+        }
+
+        res.json(filteredHotels);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des hôtels :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+};
+const getHotelDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const today = new Date();
+
+        // Récupérer l'hôtel
+        const hotel = await Hotel.findById(id);
+        if (!hotel) {
+            return res.status(404).json({ message: "Hôtel non trouvé" });
+        }
+
+        // Trouver la période active pour cet hôtel
+        const periode = await Periode.findOne({
+            hotelId: hotel._id,
+            dateDebut: { $lte: today },
+            dateFin: { $gte: today },
+        });
+
+        if (!periode) {
+            return res.json({ message: "Aucune période active trouvée pour cet hôtel" });
+        }
+
+        // Récupérer le prix de l'arrangement "petit déjeuner"
+        const petitDej = periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner");
+        const prixPetitDej = petitDej ? petitDej.prix : 0;
+
+        // Multiplier les prix par 2 (chambre double)
+        const prixMinWeekday = (periode.prixWeekday + prixPetitDej) * 2;
+        const prixMinWeekend = (periode.prixWeekend + prixPetitDej) * 2;
+
+        // Construire la réponse avec tous les détails de l'hôtel
+        const hotelDetails = {
+            id:hotel.id,
+            name: hotel.name,
+            stars: hotel.stars,
+            country: hotel.country,
+            delai_annulation:periode.delai_annulation,
+            address:hotel.address,
+            city: hotel.city,
+            arrangement: hotel.arrangement,
+            supplements: hotel.supplements,
+            images: hotel.image,
+            prixMinWeekday,
+            prixMinWeekend,
+        };
+
+        res.json(hotelDetails);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des détails de l'hôtel :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+};
+const updateperiode =async(req,res)=>{
+    try{
+       const {id}=req.params;
+       const updateData=req.body;
+       const updatPriode=await Periode.findByIdAndUpdate(id,updateData,{new:true});
+       if (!updatPriode){
+        return res.status(404).json({ message: "Periode non trouvé." });
+       }
+       res.status(200).json({ message: "Periode mis à jour avec succès.", periode: updatPriode });
+    }catch(error){
+        console.error(error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour de Periode." });
+    }
+}
+const getperiodebyidperiode=async(req,res)=>{
+    try{
+        const {id}=req.params;
+        const periode= await Periode.findById(id);
+        res.status(200).json(periode);
+    }catch(error){
+        res.status(500).json({ message: "Erreur lors de la récupération." });
+    }
+};
+const deletePeriode = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+     
+        const periode = await Periode.findById(id);
+        if (!periode) {
+            return res.status(404).json({ message: "Période non trouvée." });
+        }
+
+       
+        const hotelId = periode.hotelId;
+        const hotel = await Hotel.findById(hotelId);
+        if (!hotel) {
+            return res.status(404).json({ message: "Hôtel non trouvé." });
+        }
+
+        await Hotel.findByIdAndUpdate(hotelId, { $pull: { periodes: id } });
+
+        await Periode.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Période supprimée avec succès." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erreur lors de la suppression de la période." });
+    }
+};
 module.exports={
     createPeriodeHotel,
     searchHotels,
     getAllPeriodeByHotelid,
+    getHotelsetprixmin,
+    updateperiode,
+    getperiodebyidperiode,
+    deletePeriode,
+    getHotelDetails,
 }

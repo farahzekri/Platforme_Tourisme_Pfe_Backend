@@ -125,9 +125,28 @@ const getHotelByHotelid = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la récupération de hôtels." });
     }
 };
+const updateavailebelRoom =async (req,res)=>{
+    try {
+        const { id } = req.params;
+        const { roomType, availableRooms } = req.body;
 
+        const hotel = await Hotel.findById(id);
+        if (!hotel) {
+            return res.status(404).json({ message: "Hôtel non trouvé" });
+        }
 
+        if (!hotel.rooms.includes(roomType)) {
+            return res.status(400).json({ message: "Type de chambre invalide" });
+        }
 
+        hotel.roomAvailability.set(roomType, availableRooms);
+        await hotel.save();
+
+        res.status(200).json({ message: "Disponibilité mise à jour avec succès", hotel });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+}
 module.exports={
     createHotel,
     getAllHotels,
@@ -135,6 +154,5 @@ module.exports={
     updateHotel,
     deleteHotel,
     getHotelByHotelid,
-  
-    
+    updateavailebelRoom,  
 }
