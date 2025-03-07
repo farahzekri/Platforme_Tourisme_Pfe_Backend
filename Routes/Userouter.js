@@ -13,4 +13,6 @@ router.get('/getAgencyStats',controllerUser.getAgencyStats);
 router.put('/modifcation/:nameAgence',verifyJWT,checkSuperAdmin,controllerUser.updateB2b);
 router.delete('/delete/:nameAgence',verifyJWT,controllerUser.deleteB2b);
 router.post('/agence/add', verifyJWT, controllerUser.addAgence);
+router.post('/send-password-reset-email', controllerUser.sendResetPasswordEmail);
+router.post('/reset-password/:email',controllerUser.resetPassword);
 module.exports = router;

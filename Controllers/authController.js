@@ -113,9 +113,66 @@ const logout =(req,res)=>{
  res.clearCookie('jwt',{httpOnly:true,sameSite:'None',secure:true})
 res.json({message:'Cookie cleard'})    
 }
+const registerWithGoogle = async (req, res) => {
+    try {
+        const { email, firstName,lastName} = req.body;
+        console.log('Received Google User Data:', { email, firstName, lastName });
+        if (!email || !firstName || !lastName) {
+            return res.status(400).json({ error: "Email, firstName et lastName sont requis." });
+        }
+        // Vérifier si l'utilisateur existe déjà
+        let user = await B2B.findOne({ email });
 
+        if (user) {
+            // L'utilisateur existe, générer un token et le connecter
+            const accessToken = generateAccessToken(user);
+            const refreshToken = generateRefreshToken(user);
+            res.cookie('jwt', refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: 60 * 60 * 24 * 7 * 1000 
+            });
+
+            return res.status(200).json({ accessToken, user });
+        } else {
+            // L'utilisateur n'existe pas, création d'un nouveau compte
+            
+            const hashedPassword = await bcrypt.hash(email, 10);
+
+            const newB2B = new B2B({
+                nameAgence: firstName+lastName,
+                email,
+                password: hashedPassword,
+                status:'en attente',
+                typeAgence: 'type non spécifié',  
+                country: 'pays non spécifié',      
+                city: 'ville non spécifiée',    
+                address: 'adresse non spécifiée', 
+                phoneNumber: 'numéro non spécifié' 
+            });
+
+            await newB2B.save();
+
+            const accessToken = generateAccessToken(newB2B);
+            const refreshToken = generateRefreshToken(newB2B);
+            res.cookie('jwt', refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: 60 * 60 * 24 * 7 * 1000 
+            });
+
+            return res.status(201).json({ accessToken, newB2B });
+        }
+    } catch (error) {
+        console.error("Erreur lors de l'authentification Google :", error);
+        return res.status(500).json({ error: "Erreur interne du serveur." });
+    }
+};
 module.exports={
     login,
     refresh,
     logout,
+    registerWithGoogle,
 }

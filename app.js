@@ -13,6 +13,7 @@ const cors = require('cors');
 const app = express();
 app.use(express.json()); 
 app.use(logger);
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connecté'))
@@ -24,7 +25,11 @@ mongoose.connect(process.env.MONGO_URI)
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
-
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  next();
+});
 
 
 

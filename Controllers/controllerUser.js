@@ -1,8 +1,11 @@
 
 const bcrypt = require('bcrypt');
 const B2B = require('../Models/b2b');
+const Admin=require('../Models/admin');
 const History =require('../Models/Historique');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
@@ -466,6 +469,71 @@ const deleteB2b = async (req, res) => {
         res.status(500).json({ message: 'Erreur du serveur' });
     }
 };
+const sendResetPasswordEmail = async (req, res) => {
+    const { email } = req.body;
+  
+    // Trouver l'utilisateur dans la base de données
+    let user = await B2B.findOne({ email });
+    if (!user) {
+      user = await Admin.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ error: "Cet email n'est pas enregistré dans notre système." });
+      }
+    }
+  
+    // Créer un lien de réinitialisation
+    const resetUrl = `http://localhost:3000/auth/reset-password/${email}`;
+  
+    // Configurer l'email
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: 'Réinitialisation de votre mot de passe',
+      html: `<p>Bonjour,</p>
+             <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le lien ci-dessous pour changer votre mot de passe :</p>
+             <a href="${resetUrl}">Réinitialiser le mot de passe</a>`
+    };
+  
+    try {
+      // Envoi de l'email
+      await transporter.sendMail(mailOptions);
+      res.status(200).json({ message: "Email de réinitialisation envoyé" });
+    } catch (error) {
+      res.status(500).json({ error: "Erreur d'envoi de l'email" });
+    }
+  };
+
+  const resetPassword = async (req, res) => {
+    const { email } = req.params;
+    const { newPassword } = req.body;
+  
+    if (!newPassword) {
+      return res.status(400).json({ error: 'Le nouveau mot de passe est requis.' });
+    }
+  
+    // Trouver l'utilisateur dans la base de données
+    let user = await B2B.findOne({ email });
+    if (!user) {
+      user = await Admin.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé." });
+      }
+    }
+  
+    // Hacher le nouveau mot de passe
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+    // Mettre à jour le mot de passe de l'utilisateur
+    user.password = hashedPassword;
+  
+    // Sauvegarder les modifications
+    await user.save();
+  
+    res.status(200).json({ message: 'Mot de passe mis à jour avec succès.' });
+  };
+
+
+
 module.exports = {
     registerUser,
     addAgence,
@@ -476,4 +544,6 @@ module.exports = {
     getAgencyStats,
     updateB2b,
     deleteB2b,
+    sendResetPasswordEmail,
+    resetPassword,
 };
