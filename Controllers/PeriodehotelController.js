@@ -4,11 +4,11 @@ const Periode = require('../Models/PeriodeHotel');
 
 const createPeriodeHotel = async (req, res) => {
     try {
-     
-        const { hotelId } = req.params;  
+
+        const { hotelId } = req.params;
         const { dateDebut, dateFin, minNuits, allotement, delai_annulation, delai_retrocession, prixWeekday, prixWeekend, pourcentageSupplementSingle, pourcentageSupplementSingleWeekend, supplementsPrix, arrangementsPrix } = req.body;
 
-       
+
         const newPeriode = new Periode({
             hotelId,
             dateDebut,
@@ -25,9 +25,9 @@ const createPeriodeHotel = async (req, res) => {
             arrangementsPrix
         });
         await newPeriode.save();
-        await Hotel.findByIdAndUpdate(hotelId, { $push: { periodes: newPeriode._id } ,status: "active" });
+        await Hotel.findByIdAndUpdate(hotelId, { $push: { periodes: newPeriode._id }, status: "active" });
 
-      
+
         return res.status(201).json({ success: true, message: "Période ajoutée avec succès", periode: newPeriode });
 
     } catch (error) {
@@ -35,33 +35,127 @@ const createPeriodeHotel = async (req, res) => {
         return res.status(500).json({ success: false, message: "Erreur lors de l'ajout de la période" });
     }
 };
-const calculerPrixTotal = (adultes, enfants, agesEnfants, prixBase, prixArrangement, prixSupplements, periode, typeContract, minChildAge, maxChildAge) => {
-    let prixTotal = 2 * (prixBase + prixSupplements + prixArrangement);
+const calculerPrixTotal = (adultes, enfants, agesEnfants, prixBase, prixArrangement, prixSupplements, periode, typeContract, minChildAge, maxChildAge, dateArrivee, dateDepart) => {
+    // Calcul du nombre de nuits
+    const dateIn = new Date(dateArrivee);
+    const dateOut = new Date(dateDepart);
+    const nbNuits = Math.max((dateOut - dateIn) / (1000 * 60 * 60 * 24), 1);
+
+    let prixTotal = 2 * (prixBase + prixSupplements + prixArrangement) * nbNuits;
 
     // Supplément pour les adultes supplémentaires
     if (adultes > 2) {
         let supplementSingle = periode.pourcentageSupplementSingle / 100 || 0;
-        prixTotal += (prixBase + prixSupplements + prixArrangement) * (adultes - 2) * (1 - supplementSingle);
+        prixTotal += (prixBase + prixSupplements + prixArrangement) * (adultes - 2) * (1 - supplementSingle) * nbNuits;
     }
 
-    // Gestion des enfants si le type de contrat est "Réduction par âge d'enfant"
-    if (typeContract === "Réduction par âge d'enfant" && enfants > 0) {
+    // Gestion des enfants
+    if (typeContract === "Réduction par age d'enfant" && enfants > 0) {
         for (let age of agesEnfants) {
-            if (age < 2) {
-                // Enfant de moins de 2 ans → Gratuit
-                continue;
-            } else if (age >= minChildAge && age <= maxChildAge) {
-                // Enfant entre minChildAge et maxChildAge → Réduction de 50%
-                prixTotal += (prixBase + prixSupplements + prixArrangement) * 0.5;
+            if (age < 2) continue;
+            else if (age >= minChildAge && age <= maxChildAge) {
+                prixTotal += (prixBase + prixSupplements + prixArrangement) * 0.5 * nbNuits;
             } else {
-                // Enfant plus âgé que maxChildAge → Paie comme un adulte
-                prixTotal += prixBase + prixSupplements + prixArrangement;
+                prixTotal += (prixBase + prixSupplements + prixArrangement) * nbNuits;
             }
         }
     }
 
     return prixTotal;
 };
+const getHotelAvailability = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { dateArrivee, dateDepart, adultes, enfants, agesEnfants, arrangementSelectionne, supplementsSelectionnes } = req.query;
+
+        if (!dateArrivee || !dateDepart || !adultes) {
+            return res.status(400).json({ message: "Veuillez fournir toutes les informations nécessaires." });
+        }
+
+        const hotel = await Hotel.findById(id);
+        if (!hotel) return res.status(404).json({ message: "Hôtel non trouvé" });
+
+        const dateDebut = new Date(dateArrivee);
+        const dateFin = new Date(dateDepart);
+        const periode = await Periode.findOne({
+            hotelId: hotel._id,
+            dateDebut: { $lte: dateDebut },
+            dateFin: { $gte: dateFin },
+        });
+
+        if (!periode) return res.json({ message: "Aucune période active trouvée." });
+
+        // Récupération des prix des arrangements et suppléments
+        let arrangementPrix = arrangementSelectionne
+            ? periode.arrangementsPrix.find(a => a.arrangement === arrangementSelectionne)?.prix || 0
+            : periode.arrangementsPrix.find(a => a.arrangement === "petit déjeuner")?.prix || 0;
+
+        let supplementPrix = 0;
+        if (supplementsSelectionnes) {
+            let supplementsArray = Array.isArray(supplementsSelectionnes)
+                ? supplementsSelectionnes
+                : supplementsSelectionnes.split(",").map(s => s.trim());
+
+            supplementsArray.forEach(supplement => {
+                const supplementTrouve = periode.supplementsPrix.find(s => s.supplement === supplement);
+                if (supplementTrouve) {
+                    supplementPrix += supplementTrouve.prix;
+                }
+            });
+        }
+
+        let agesArray = [];
+        if (enfants > 0) {
+            if (!agesEnfants) {
+                return res.status(400).json({ message: "Veuillez fournir l'âge des enfants." });
+            }
+            agesArray = Array.isArray(agesEnfants) ? agesEnfants.map(Number) : agesEnfants.split(",").map(age => Number(age.trim()));
+        }
+
+        // Gestion des chambres en fonction du nombre d'adultes et d'enfants
+        const chambresDisponibles = [];
+        const chambres = Object.fromEntries(hotel.roomAvailability);
+        
+        if (adultes == 2 && enfants == 1) {
+            if (chambres["triple"] > 0) {
+                chambresDisponibles.push({
+                    type: "triple",
+                    dispo: chambres["triple"],
+                    prix: calculerPrixTotal(adultes, enfants, agesArray, periode.prixWeekday, arrangementPrix, supplementPrix, periode, hotel.Typecontract, hotel.minChildAge, hotel.maxChildAge, dateArrivee, dateDepart),
+                });
+            }
+        } else if (adultes == 2 && enfants == 2) {
+            if (chambres["double"] >= 2) {
+                chambresDisponibles.push({
+                    type: " 2 chambres double",
+                    dispo: chambres["double"],
+                    prix: calculerPrixTotal(1, 1, agesArray, periode.prixWeekday, arrangementPrix, supplementPrix, periode, hotel.Typecontract, hotel.minChildAge, hotel.maxChildAge, dateArrivee, dateDepart) * 2,
+                });
+            }
+        } else {
+            // Cas général pour d'autres combinaisons d'adultes et d'enfants
+            Object.entries(chambres).forEach(([type, dispo]) => {
+                if (dispo > 0 && (
+                    (adultes <= 2 && type === "double") ||
+                    (adultes == 3 && type === "triple") ||
+                    (adultes == 4 && type === "quadruple")
+                )) {
+                    chambresDisponibles.push({
+                        type,
+                        dispo,
+                        prix: calculerPrixTotal(adultes, enfants, agesArray, periode.prixWeekday, arrangementPrix, supplementPrix, periode, hotel.Typecontract, hotel.minChildAge, hotel.maxChildAge, dateArrivee, dateDepart),
+                    });
+                }
+            });
+        }
+
+        res.json({ chambresDisponibles });
+    } catch (error) {
+        console.error("Erreur récupération disponibilité hôtel :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+};
+
 const searchHotels = async (req, res) => {
     try {
         const { country, dateDebut, dateFin, adultes, enfants, agesEnfants, arrangementChoisi, supplementsChoisis } = req.body;
@@ -71,24 +165,24 @@ const searchHotels = async (req, res) => {
         let resultats = [];
 
         for (let hotel of hotels) {
-            let periodesDisponibles = hotel.periodes.filter(periode => 
+            let periodesDisponibles = hotel.periodes.filter(periode =>
                 new Date(periode.dateDebut) <= new Date(dateDebut) &&
                 new Date(periode.dateFin) >= new Date(dateFin)
             );
 
             if (periodesDisponibles.length === 0) continue;
 
-            let periode = periodesDisponibles[0]; 
+            let periode = periodesDisponibles[0];
 
             let joursWeekend = hotel.Jourdeweekend || [];
-            let estWeekend = joursWeekend.some(jour => 
+            let estWeekend = joursWeekend.some(jour =>
                 [new Date(dateDebut).getDay(), new Date(dateFin).getDay()].includes(jour)
             );
 
             let prixBase = estWeekend ? periode.prixWeekend : periode.prixWeekday;
 
             let prixArrangement = periode.arrangementsPrix.find(arr => arr.arrangement === arrangementChoisi)?.prix ||
-                                  periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner")?.prix || 0;
+                periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner")?.prix || 0;
 
             let prixSupplements = 0;
             if (supplementsChoisis.length > 0) {
@@ -99,7 +193,7 @@ const searchHotels = async (req, res) => {
             }
 
             // Récupérer les informations du contrat pour les réductions enfants
-            let typeContract = hotel.Typecontract || ""; 
+            let typeContract = hotel.Typecontract || "";
             let minChildAge = hotel.minChildAge || 0;
             let maxChildAge = hotel.maxChildAge || 0;
 
@@ -110,7 +204,7 @@ const searchHotels = async (req, res) => {
                 hotel: hotel.name,
                 country: hotel.country,
                 city: hotel.city,
-                stars:hotel.stars,
+                stars: hotel.stars,
                 prixTotal,
                 image: hotel.image[0],
                 arrangement: arrangementChoisi || "petit déjeuner"
@@ -124,15 +218,16 @@ const searchHotels = async (req, res) => {
         return res.status(500).json({ success: false, message: "Erreur lors de la recherche d'hôtels" });
     }
 };
-const getAllPeriodeByHotelid=async(req,res)=>{
-    try{
+const getAllPeriodeByHotelid = async (req, res) => {
+    try {
         const { hotelId } = req.params;
-        const periodes = await Periode.find({ hotelId }); 
+        const periodes = await Periode.find({ hotelId });
         res.status(200).json(periodes);
-    }catch (error) {
+    } catch (error) {
         console.error("Erreur lors de la récupération des périodes :", error);
         res.status(500).json({ message: "Erreur serveur" });
-}};
+    }
+};
 
 const getHotelsetprixmin = async (req, res) => {
     try {
@@ -173,14 +268,14 @@ const getHotelsetprixmin = async (req, res) => {
 
                 // Retourner les informations formatées
                 return {
-                    id:hotel.id,
+                    id: hotel.id,
                     name: hotel.name,
                     stars: hotel.stars,
                     country: hotel.country,
                     city: hotel.city,
-                    arrangement:hotel.arrangement,
-                    supplements:hotel.supplements,
-                    image:hotel.image,
+                    arrangement: hotel.arrangement,
+                    supplements: hotel.supplements,
+                    image: hotel.image,
                     prixMinWeekday: periode.prixWeekday + prixPetitDej,
                     prixMinWeekend: periode.prixWeekend + prixPetitDej,
                 };
@@ -232,12 +327,12 @@ const getHotelDetails = async (req, res) => {
 
         // Construire la réponse avec tous les détails de l'hôtel
         const hotelDetails = {
-            id:hotel.id,
+            id: hotel.id,
             name: hotel.name,
             stars: hotel.stars,
             country: hotel.country,
-            delai_annulation:periode.delai_annulation,
-            address:hotel.address,
+            delai_annulation: periode.delai_annulation,
+            address: hotel.address,
             city: hotel.city,
             arrangement: hotel.arrangement,
             supplements: hotel.supplements,
@@ -252,26 +347,26 @@ const getHotelDetails = async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 };
-const updateperiode =async(req,res)=>{
-    try{
-       const {id}=req.params;
-       const updateData=req.body;
-       const updatPriode=await Periode.findByIdAndUpdate(id,updateData,{new:true});
-       if (!updatPriode){
-        return res.status(404).json({ message: "Periode non trouvé." });
-       }
-       res.status(200).json({ message: "Periode mis à jour avec succès.", periode: updatPriode });
-    }catch(error){
+const updateperiode = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+        const updatPriode = await Periode.findByIdAndUpdate(id, updateData, { new: true });
+        if (!updatPriode) {
+            return res.status(404).json({ message: "Periode non trouvé." });
+        }
+        res.status(200).json({ message: "Periode mis à jour avec succès.", periode: updatPriode });
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Erreur lors de la mise à jour de Periode." });
     }
 }
-const getperiodebyidperiode=async(req,res)=>{
-    try{
-        const {id}=req.params;
-        const periode= await Periode.findById(id);
+const getperiodebyidperiode = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const periode = await Periode.findById(id);
         res.status(200).json(periode);
-    }catch(error){
+    } catch (error) {
         res.status(500).json({ message: "Erreur lors de la récupération." });
     }
 };
@@ -279,13 +374,13 @@ const deletePeriode = async (req, res) => {
     try {
         const { id } = req.params;
 
-     
+
         const periode = await Periode.findById(id);
         if (!periode) {
             return res.status(404).json({ message: "Période non trouvée." });
         }
 
-       
+
         const hotelId = periode.hotelId;
         const hotel = await Hotel.findById(hotelId);
         if (!hotel) {
@@ -302,7 +397,7 @@ const deletePeriode = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la suppression de la période." });
     }
 };
-module.exports={
+module.exports = {
     createPeriodeHotel,
     searchHotels,
     getAllPeriodeByHotelid,
@@ -311,4 +406,5 @@ module.exports={
     getperiodebyidperiode,
     deletePeriode,
     getHotelDetails,
+    getHotelAvailability,
 }

@@ -10,4 +10,5 @@ router.put('/upadeperiode/:id',PeriodeController.updateperiode);
 router.get('/getperiodebyidperiode/:id',PeriodeController.getperiodebyidperiode);
 router.delete('/deleteperiode/:id',PeriodeController.deletePeriode);
 router.get('/getdetailHotel/:id',PeriodeController.getHotelDetails);
+router.get('/getavailbol/:id',PeriodeController.getHotelAvailability);
 module.exports=router;
