@@ -29,7 +29,8 @@ const hotelSchema = new mongoose.Schema(
       type: Map, 
       of: Number,  
       default: {}  
-  }
+  },
+  averageRating: { type: Number, default: 0 }, 
   },
   { timestamps: true }
 );

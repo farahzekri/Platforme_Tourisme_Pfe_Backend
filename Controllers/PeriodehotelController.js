@@ -158,9 +158,9 @@ const getHotelAvailability = async (req, res) => {
 
 const searchHotels = async (req, res) => {
     try {
-        const { country, dateDebut, dateFin, adultes, enfants, agesEnfants, arrangementChoisi, supplementsChoisis } = req.body;
+        const { country, city, dateDebut, dateFin, adultes, enfants, agesEnfants } = req.body;
 
-        let hotels = await Hotel.find({ country, status: "active" }).populate("periodes");
+        let hotels = await Hotel.find({ country, city, status: "active" }).populate("periodes");
 
         let resultats = [];
 
@@ -181,24 +181,22 @@ const searchHotels = async (req, res) => {
 
             let prixBase = estWeekend ? periode.prixWeekend : periode.prixWeekday;
 
-            let prixArrangement = periode.arrangementsPrix.find(arr => arr.arrangement === arrangementChoisi)?.prix ||
-                periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner")?.prix || 0;
+            // Arrangement par défaut = "petit déjeuner"
+            let prixArrangement = periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner")?.prix || 0;
 
+            // Supprimer les suppléments (mettre à 0)
             let prixSupplements = 0;
-            if (supplementsChoisis.length > 0) {
-                for (let supp of supplementsChoisis) {
-                    let suppObj = periode.supplementsPrix.find(s => s.supplement === supp);
-                    if (suppObj) prixSupplements += suppObj.prix;
-                }
-            }
 
             // Récupérer les informations du contrat pour les réductions enfants
             let typeContract = hotel.Typecontract || "";
             let minChildAge = hotel.minChildAge || 0;
             let maxChildAge = hotel.maxChildAge || 0;
 
-            // 🔹 Appel de `calculerPrixTotal` avec gestion des enfants
-            let prixTotal = calculerPrixTotal(adultes, enfants, agesEnfants, prixBase, prixArrangement, prixSupplements, periode, typeContract, minChildAge, maxChildAge);
+            // 🔹 Appel de `calculerPrixTotal`
+            let prixTotal = calculerPrixTotal(
+                adultes, enfants, agesEnfants, prixBase, prixArrangement, prixSupplements, 
+                periode, typeContract, minChildAge, maxChildAge, dateDebut, dateFin
+            );
 
             resultats.push({
                 hotel: hotel.name,
@@ -207,7 +205,6 @@ const searchHotels = async (req, res) => {
                 stars: hotel.stars,
                 prixTotal,
                 image: hotel.image[0],
-                arrangement: arrangementChoisi || "petit déjeuner"
             });
         }
 
