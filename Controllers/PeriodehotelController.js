@@ -77,32 +77,18 @@ const getHotelAvailability = async (req, res) => {
 
         const dateDebut = new Date(dateArrivee);
         const dateFin = new Date(dateDepart);
-        const periode = await Periode.findOne({
+
+        // Trouver toutes les périodes qui couvrent une partie de la période demandée
+        const periodes = await Periode.find({
             hotelId: hotel._id,
-            dateDebut: { $lte: dateDebut },
-            dateFin: { $gte: dateFin },
-        });
+            $or: [
+                { dateDebut: { $lte: dateDebut }, dateFin: { $gte: dateDebut } },
+                { dateDebut: { $lte: dateFin }, dateFin: { $gte: dateFin } },
+                { dateDebut: { $gte: dateDebut }, dateFin: { $lte: dateFin } }
+            ]
+        }).sort({ dateDebut: 1 });
 
-        if (!periode) return res.json({ message: "Aucune période active trouvée." });
-
-        // Récupération des prix des arrangements et suppléments
-        let arrangementPrix = arrangementSelectionne
-            ? periode.arrangementsPrix.find(a => a.arrangement === arrangementSelectionne)?.prix || 0
-            : periode.arrangementsPrix.find(a => a.arrangement === "petit déjeuner")?.prix || 0;
-
-        let supplementPrix = 0;
-        if (supplementsSelectionnes) {
-            let supplementsArray = Array.isArray(supplementsSelectionnes)
-                ? supplementsSelectionnes
-                : supplementsSelectionnes.split(",").map(s => s.trim());
-
-            supplementsArray.forEach(supplement => {
-                const supplementTrouve = periode.supplementsPrix.find(s => s.supplement === supplement);
-                if (supplementTrouve) {
-                    supplementPrix += supplementTrouve.prix;
-                }
-            });
-        }
+        if (periodes.length === 0) return res.json({ message: "Aucune période active trouvée." });
 
         let agesArray = [];
         if (enfants > 0) {
@@ -112,42 +98,71 @@ const getHotelAvailability = async (req, res) => {
             agesArray = Array.isArray(agesEnfants) ? agesEnfants.map(Number) : agesEnfants.split(",").map(age => Number(age.trim()));
         }
 
-        // Gestion des chambres en fonction du nombre d'adultes et d'enfants
-        const chambresDisponibles = [];
         const chambres = Object.fromEntries(hotel.roomAvailability);
-        
-        if (adultes == 2 && enfants == 1) {
-            if (chambres["triple"] > 0) {
-                chambresDisponibles.push({
-                    type: "triple",
-                    dispo: chambres["triple"],
-                    prix: calculerPrixTotal(adultes, enfants, agesArray, periode.prixWeekday, arrangementPrix, supplementPrix, periode, hotel.Typecontract, hotel.minChildAge, hotel.maxChildAge, dateArrivee, dateDepart),
+        let prixTotal = 0;
+        let nbNuitsTotal = 0;
+
+        periodes.forEach((periode, index) => {
+            let start = new Date(Math.max(dateDebut, new Date(periode.dateDebut)));
+            let end = new Date(Math.min(dateFin, new Date(periode.dateFin)));
+            let nbNuits = Math.max((end - start) / (1000 * 60 * 60 * 24), 1);  // Nombre de nuits par période
+            nbNuitsTotal += nbNuits;
+
+            let arrangementPrix = arrangementSelectionne
+                ? periode.arrangementsPrix.find(a => a.arrangement === arrangementSelectionne)?.prix || 0
+                : periode.arrangementsPrix.find(a => a.arrangement === "petit déjeuner")?.prix || 0;
+
+            let supplementPrix = 0;
+            if (supplementsSelectionnes) {
+                let supplementsArray = Array.isArray(supplementsSelectionnes)
+                    ? supplementsSelectionnes
+                    : supplementsSelectionnes.split(",").map(s => s.trim());
+
+                supplementsArray.forEach(supplement => {
+                    const supplementTrouve = periode.supplementsPrix.find(s => s.supplement === supplement);
+                    if (supplementTrouve) {
+                        supplementPrix += supplementTrouve.prix;
+                    }
                 });
             }
-        } else if (adultes == 2 && enfants == 2) {
-            if (chambres["double"] >= 2) {
-                chambresDisponibles.push({
-                    type: " 2 chambres double",
-                    dispo: chambres["double"],
-                    prix: calculerPrixTotal(1, 1, agesArray, periode.prixWeekday, arrangementPrix, supplementPrix, periode, hotel.Typecontract, hotel.minChildAge, hotel.maxChildAge, dateArrivee, dateDepart) * 2,
-                });
+
+            // Calculer le prix pour chaque période séparément
+            let prixParPeriode = calculerPrixTotal(
+                adultes,
+                enfants,
+                agesArray,
+                periode.prixWeekday,  // Prix spécifique à la période
+                arrangementPrix,
+                supplementPrix,
+                periode,
+                hotel.Typecontract,
+                hotel.minChildAge,
+                hotel.maxChildAge,
+                start,
+                end
+            );
+
+            prixTotal += prixParPeriode;
+        });
+
+        const chambresDisponibles = Object.entries(chambres).map(([type, dispo]) => {
+            if (dispo > 0 && (
+                (adultes <= 2 && type === "double") ||
+                (adultes == 3 && type === "triple") ||
+                (adultes == 4 && type === "quadruple")
+            )) {
+                return {
+                    type,
+                    dispo,
+                    prix: prixTotal,
+                    nbNuits: nbNuitsTotal,
+                    periodes: periodes.map(p => ({
+                        dateDebut: p.dateDebut,
+                        dateFin: p.dateFin
+                    }))
+                };
             }
-        } else {
-            // Cas général pour d'autres combinaisons d'adultes et d'enfants
-            Object.entries(chambres).forEach(([type, dispo]) => {
-                if (dispo > 0 && (
-                    (adultes <= 2 && type === "double") ||
-                    (adultes == 3 && type === "triple") ||
-                    (adultes == 4 && type === "quadruple")
-                )) {
-                    chambresDisponibles.push({
-                        type,
-                        dispo,
-                        prix: calculerPrixTotal(adultes, enfants, agesArray, periode.prixWeekday, arrangementPrix, supplementPrix, periode, hotel.Typecontract, hotel.minChildAge, hotel.maxChildAge, dateArrivee, dateDepart),
-                    });
-                }
-            });
-        }
+        }).filter(Boolean);
 
         res.json({ chambresDisponibles });
     } catch (error) {
@@ -194,15 +209,18 @@ const searchHotels = async (req, res) => {
 
             // 🔹 Appel de `calculerPrixTotal`
             let prixTotal = calculerPrixTotal(
-                adultes, enfants, agesEnfants, prixBase, prixArrangement, prixSupplements, 
+                adultes, enfants, agesEnfants, prixBase, prixArrangement, prixSupplements,
                 periode, typeContract, minChildAge, maxChildAge, dateDebut, dateFin
             );
 
             resultats.push({
+                id:hotel.id,
                 hotel: hotel.name,
                 country: hotel.country,
                 city: hotel.city,
                 stars: hotel.stars,
+                Typecontract:hotel.Typecontract,
+                arrangement:hotel.arrangement,
                 prixTotal,
                 image: hotel.image[0],
             });
