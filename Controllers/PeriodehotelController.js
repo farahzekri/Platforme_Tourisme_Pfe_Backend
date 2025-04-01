@@ -87,6 +87,10 @@ const getHotelAvailability = async (req, res) => {
                 { dateDebut: { $gte: dateDebut }, dateFin: { $lte: dateFin } }
             ]
         }).sort({ dateDebut: 1 });
+        console.log("📌 Périodes trouvées:", periodes.map(p => ({
+            debut: p.dateDebut.toISOString(),
+            fin: p.dateFin.toISOString()
+        })));
 
         if (periodes.length === 0) return res.json({ message: "Aucune période active trouvée." });
 
@@ -105,9 +109,9 @@ const getHotelAvailability = async (req, res) => {
         periodes.forEach((periode, index) => {
             let start = new Date(Math.max(dateDebut, new Date(periode.dateDebut)));
             let end = new Date(Math.min(dateFin, new Date(periode.dateFin)));
-            let nbNuits = Math.max((end - start) / (1000 * 60 * 60 * 24), 1);  // Nombre de nuits par période
+            const nbNuits = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
             nbNuitsTotal += nbNuits;
-
+            console.log(`📌 Période ${index + 1}:`, { start: start.toISOString(), end: end.toISOString(), nbNuits });
             let arrangementPrix = arrangementSelectionne
                 ? periode.arrangementsPrix.find(a => a.arrangement === arrangementSelectionne)?.prix || 0
                 : periode.arrangementsPrix.find(a => a.arrangement === "petit déjeuner")?.prix || 0;
@@ -125,7 +129,7 @@ const getHotelAvailability = async (req, res) => {
                     }
                 });
             }
-
+            console.log(`💰 Prix de base: ${periode.prixWeekday}, Arrangement: ${arrangementPrix}, Suppléments: ${supplementPrix}, Nuits: ${nbNuits}`);
             // Calculer le prix pour chaque période séparément
             let prixParPeriode = calculerPrixTotal(
                 adultes,
@@ -141,10 +145,11 @@ const getHotelAvailability = async (req, res) => {
                 start,
                 end
             );
-
+            console.log(`✅ Prix pour la période ${index + 1}: ${prixParPeriode}`);
             prixTotal += prixParPeriode;
         });
-
+        console.log(`🔹 Total nuits calculées: ${nbNuitsTotal}`);
+        console.log(`🔹 Prix total avant arrondi: ${prixTotal}`);
         const chambresDisponibles = Object.entries(chambres).map(([type, dispo]) => {
             if (dispo > 0 && (
                 (adultes <= 2 && type === "double") ||
@@ -180,48 +185,76 @@ const searchHotels = async (req, res) => {
         let resultats = [];
 
         for (let hotel of hotels) {
+            console.log(`\n🔍 Traitement de l'hôtel: ${hotel.name}`);
+
             let periodesDisponibles = hotel.periodes.filter(periode =>
-                new Date(periode.dateDebut) <= new Date(dateDebut) &&
-                new Date(periode.dateFin) >= new Date(dateFin)
+                (new Date(periode.dateDebut) <= new Date(dateFin)) && (new Date(periode.dateFin) >= new Date(dateDebut))
             );
 
-            if (periodesDisponibles.length === 0) continue;
+            console.log(`📅 Périodes disponibles pour cet hôtel: `, periodesDisponibles.map(p => ({
+                debut: p.dateDebut,
+                fin: p.dateFin,
+                prixWeekday: p.prixWeekday,
+                prixWeekend: p.prixWeekend
+            })));
 
-            let periode = periodesDisponibles[0];
+            if (periodesDisponibles.length === 0) continue; // Aucun période valide
 
-            let joursWeekend = hotel.Jourdeweekend || [];
-            let estWeekend = joursWeekend.some(jour =>
-                [new Date(dateDebut).getDay(), new Date(dateFin).getDay()].includes(jour)
-            );
+            let prixTotal = 0;
+            let nbNuitsTotal = 0;
 
-            let prixBase = estWeekend ? periode.prixWeekend : periode.prixWeekday;
+            periodesDisponibles.forEach((periode, index) => {
+                let start = new Date(Math.max(new Date(dateDebut), new Date(periode.dateDebut)));
+                let end = new Date(Math.min(new Date(dateFin), new Date(periode.dateFin)));
+                let nbNuits = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-            // Arrangement par défaut = "petit déjeuner"
-            let prixArrangement = periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner")?.prix || 0;
+                console.log(`📆 Période ${index + 1}:`);
+                console.log(`   - Date début utilisée: ${start.toISOString().split('T')[0]}`);
+                console.log(`   - Date fin utilisée: ${end.toISOString().split('T')[0]}`);
+                console.log(`   - Nombre de nuits: ${nbNuits}`);
 
-            // Supprimer les suppléments (mettre à 0)
-            let prixSupplements = 0;
+             
+                let prixBase = 0;
+                let prixNuitTotal = 0;
+               
+                for (let i = 0; i < nbNuits; i++) {
+                    let currentDay = new Date(start);
+                    currentDay.setDate(currentDay.getDate() + i);
+                    let isWeekend = hotel.Jourdeweekend.includes(currentDay.getDay());
+            
+                    let prixNuit = isWeekend ? periode.prixWeekend : periode.prixWeekday;
+                    prixNuit += periode.arrangementsPrix.find(arr => arr.arrangement === "petit déjeuner")?.prix || 0;
+            
+                    prixNuitTotal += prixNuit;
+                }
+              
+             
+             
 
-            // Récupérer les informations du contrat pour les réductions enfants
-            let typeContract = hotel.Typecontract || "";
-            let minChildAge = hotel.minChildAge || 0;
-            let maxChildAge = hotel.maxChildAge || 0;
 
-            // 🔹 Appel de `calculerPrixTotal`
-            let prixTotal = calculerPrixTotal(
-                adultes, enfants, agesEnfants, prixBase, prixArrangement, prixSupplements,
-                periode, typeContract, minChildAge, maxChildAge, dateDebut, dateFin
-            );
+
+
+              
+                console.log(`   ✅ Prix calculé pour cette période: ${prixNuitTotal}`);
+
+                prixTotal += prixNuitTotal * adultes;
+                nbNuitsTotal += nbNuits;
+            });
+
+            console.log(`🏨 Total pour l'hôtel ${hotel.name}: ${prixTotal} (${nbNuitsTotal} nuits)`);
 
             resultats.push({
-                id:hotel.id,
+                id: hotel.id,
                 hotel: hotel.name,
                 country: hotel.country,
                 city: hotel.city,
                 stars: hotel.stars,
-                Typecontract:hotel.Typecontract,
-                arrangement:hotel.arrangement,
+                Typecontract: hotel.Typecontract,
+                arrangement: hotel.arrangement,
                 prixTotal,
+                nbNuitsTotal,
+                averageRating:hotel.averageRating,
+                options:hotel.options,
                 image: hotel.image[0],
             });
         }
@@ -229,7 +262,7 @@ const searchHotels = async (req, res) => {
         return res.status(200).json({ success: true, hotels: resultats });
 
     } catch (error) {
-        console.error("Erreur lors de la recherche d'hôtels :", error);
+        console.error("❌ Erreur lors de la recherche d'hôtels :", error);
         return res.status(500).json({ success: false, message: "Erreur lors de la recherche d'hôtels" });
     }
 };
@@ -266,9 +299,11 @@ const getHotelsetprixmin = async (req, res) => {
                 // Trouver la période active
                 const periode = await Periode.findOne({
                     hotelId: hotel._id,
-                    dateDebut: { $lte: today },
-                    dateFin: { $gte: today },
-                });
+                    $or: [
+                        { dateDebut: { $lte: today }, dateFin: { $gte: today } }, // Période active aujourd’hui
+                        { dateDebut: { $gte: today } } // OU Prochaine période à venir
+                    ]
+                }).sort({ dateDebut: 1 });
 
                 if (!periode) {
                     console.log(`❌ Aucune période trouvée pour l'hôtel : ${hotel.name}`);
