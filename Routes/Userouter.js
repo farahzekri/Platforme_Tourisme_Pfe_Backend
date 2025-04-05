@@ -3,6 +3,7 @@ const router = express.Router();
 const controllerUser=require('../Controllers/controllerUser');
 const verifyJWT = require('../middleware/verifyJWT');
 const  checkSuperAdmin  = require('../middleware/cheksuperadmin');
+const { UploadStream } = require('cloudinary');
 
 router.post('/register',controllerUser.registerUser);
 router.get('/getuserspending',controllerUser.getAllB2BUsers);
@@ -15,4 +16,7 @@ router.delete('/delete/:nameAgence',verifyJWT,controllerUser.deleteB2b);
 router.post('/agence/add', verifyJWT, controllerUser.addAgence);
 router.post('/send-password-reset-email', controllerUser.sendResetPasswordEmail);
 router.post('/reset-password/:email',controllerUser.resetPassword);
+router.put("/update/:id",controllerUser.updateB2BInfo);
+router.put("/update-password", controllerUser.updateB2BPassword);
+router.get('/getagencebyid/:id',controllerUser.getB2BByidAgence);
 module.exports = router;

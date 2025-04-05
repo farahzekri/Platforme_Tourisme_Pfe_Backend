@@ -506,34 +506,98 @@ const sendResetPasswordEmail = async (req, res) => {
   const resetPassword = async (req, res) => {
     const { email } = req.params;
     const { newPassword } = req.body;
-  
+
     if (!newPassword) {
-      return res.status(400).json({ error: 'Le nouveau mot de passe est requis.' });
+        return res.status(400).json({ error: 'Le nouveau mot de passe est requis.' });
     }
+
   
-    // Trouver l'utilisateur dans la base de données
     let user = await B2B.findOne({ email });
     if (!user) {
-      user = await Admin.findOne({ email });
-      if (!user) {
-        return res.status(404).json({ error: "Utilisateur non trouvé." });
-      }
+        user = await Admin.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ error: "Utilisateur non trouvé." });
+        }
     }
+
   
-    // Hacher le nouveau mot de passe
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-  
-    // Mettre à jour le mot de passe de l'utilisateur
-    user.password = hashedPassword;
-  
-    // Sauvegarder les modifications
+    user.password = newPassword;
+
+
     await user.save();
-  
+
     res.status(200).json({ message: 'Mot de passe mis à jour avec succès.' });
-  };
+};
 
 
+const updateB2BInfo = async (req, res) => {
+    try {
+        const { id } = req.params; // ID du B2B à mettre à jour
+        const { nameAgence, email, phoneNumber, address, city, country, documents, typeAgence } = req.body;
 
+        const updatedB2B = await B2B.findByIdAndUpdate(
+            id,
+            { nameAgence, email, phoneNumber, address, city, country, documents, typeAgence },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedB2B) {
+            return res.status(404).json({ message: "B2B introuvable" });
+        }
+
+        res.status(200).json(updatedB2B);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la mise à jour", error });
+    }
+};
+const updateB2BPassword = async (req, res) => {
+    try {
+        const { email, oldPassword, newPassword } = req.body;
+
+        // Vérifier si l'utilisateur existe
+        const b2b = await B2B.findOne({ email });
+        if (!b2b) {
+            return res.status(404).json({ message: "B2B introuvable" });
+        }
+
+        // Vérifier si l'ancien mot de passe est correct
+        const isMatch = await bcrypt.compare(oldPassword, b2b.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Ancien mot de passe incorrect" });
+        }
+
+        // Hasher le nouveau mot de passe
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Désactiver le middleware `pre('save')` en utilisant `updateOne`
+        await B2B.updateOne({ email }, { $set: { password: hashedPassword } });
+
+        res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la mise à jour du mot de passe", error });
+    }
+};
+
+
+const getB2BByidAgence = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+
+        const b2bUser = await B2B.findById( id );
+
+        if (!b2bUser) {
+            return res.status(404).json({ message: `Aucune agence trouvée avec le nom "${nameAgence}".` });
+        }
+
+        res.status(200).json(b2bUser);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'agence B2B:', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération de l\'agence B2B.' });
+    }
+};
 module.exports = {
     registerUser,
     addAgence,
@@ -546,4 +610,7 @@ module.exports = {
     deleteB2b,
     sendResetPasswordEmail,
     resetPassword,
+    updateB2BInfo,
+    updateB2BPassword,
+    getB2BByidAgence,
 };
