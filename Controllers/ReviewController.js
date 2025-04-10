@@ -1,6 +1,7 @@
 const Review = require("../Models/Review");
 const Hotel = require("../Models/Hotel");
 const mongoose = require("mongoose");
+const logger=require('../utils/logger');
 const addReview = async (req, res) => {
     try {
         const { hotelId } = req.params;
@@ -31,9 +32,10 @@ const addReview = async (req, res) => {
   
       // Recalculer la note moyenne de l'hôtel
       await calculateHotelRating(hotelId);
-  
+      logger.info(`Avis ajouté avec succès`);
       res.status(201).json({ message: "Avis ajouté avec succès", review });
     } catch (error) {
+      logger.error("Erreur serveur " + error.message);
       res.status(500).json({ message: "Erreur serveur", error });
     }
   };
@@ -46,12 +48,14 @@ const getReviewsByHotel = async (req, res) => {
       if (!reviews.length) {
         return res.status(404).json({ message: "Aucun avis trouvé pour cet hôtel" });
       }
-  
+      logger.info(`review get succes`);
       res.status(200).json(reviews);
     } catch (error) {
+        logger.error("Server error : " + error.message);
       res.status(500).json({ message: "Erreur serveur", error });
     }
   };
+  
   const calculateHotelRating = async (hotelId) => {
     try {
         console.log(`🔹 Calcul de la note moyenne pour l'hôtel ${hotelId}`);

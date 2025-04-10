@@ -1,23 +1,26 @@
 const Admin = require('../Models/admin');
 
-
+const logger=require('../utils/logger');
 const createAdmin = async (req, res) => {
     try {
         const { username, email, password, role, privilege } = req.body;
 
        
         if (req.user.role !== 'superadmin') {
+            logger.warn("Access denied. Only superadmin can create admins.");
             return res.status(403).json({ message: 'Access denied. Only superadmin can create admins.' });
         }
 
       
         if (role !== 'admin') {
+            logger.warn("Invalid role specified. Only admin can be created.");
             return res.status(400).json({ message: 'Invalid role specified. Only "admin" can be created.' });
         }
 
        
         const existingAdmin = await Admin.findOne({ email });
         if (existingAdmin) {
+            logger.warn("Email already in use");
             return res.status(400).json({ message: 'Email already in use' });
         }
 
@@ -37,10 +40,11 @@ const createAdmin = async (req, res) => {
         //         });
         
         //         await history.save();
-
+        logger.info(`Admin created successfully ${username} ${newAdmin.id}`);
         res.status(201).json({ message: 'Admin created successfully', newAdmin });
     } catch (error) {
         console.error(error);
+        logger.error("Server error : " + error.message);
         res.status(500).json({ message: 'Server error' });
     }
 };
@@ -50,10 +54,12 @@ const getAllAdmin = async (req, res) => {
        
 
         const admins = await Admin.find({ role: 'admin' });
-        console.log("Admins trouvés:", admins); // Log des admins
+       
+        logger.info(`Admin trouvés `);
         res.status(200).json(admins);
     } catch (error) {
-        console.error("Erreur lors de la récupération des admins:", error.message);
+        
+        logger.error("Erreur lors de la récupération des admins: " + error.message);
         res.status(500).json({ error: 'Erreur lors de la récupération des admins.' });
     }
 };
@@ -73,10 +79,11 @@ const deleteAdmin = async (req, res) => {
 
         // Corrected to use username in the delete operation
         await Admin.findOneAndDelete({ username });
-
+        logger.info(`Admin deleted successfully`);
         res.status(200).json({ message: 'Admin deleted successfully' });
     } catch (error) {
         console.error(error);
+        logger.error("Server error : " + error.message);
         res.status(500).json({ message: 'Server error' });
     }
 };
@@ -97,7 +104,7 @@ const updateAdmin = async (req, res) => {
 
         
         await admin.save();
-
+        logger.info(`Admin updated successfully `);
         res.status(200).json({ message: 'Admin updated successfully', admin });
     } catch (error) {
         if (error.code === 11000) {
@@ -105,6 +112,7 @@ const updateAdmin = async (req, res) => {
             return res.status(400).json({ message: 'Username or email already exists' });
         }
         console.error(error);
+        logger.error("Server error : " + error.message);
         res.status(500).json({ message: 'Server error' });
     }
 };

@@ -10,6 +10,14 @@ const historyrouter=require('./Routes/HistoriqueRouter');
 const hotelrouter =require('./Routes/HotelRouter');
 const perioderouter =require('./Routes/PeriodeHotel');
 const Review =require('./Routes/ReviewRouter');
+const Reservation=require('./Routes/Reservation');
+
+const loggerdev = require("./utils/logger")
+const morgan = require('morgan');
+const fs = require('fs');
+const path = require('path');
+
+
 const cors = require('cors');
 const app = express();
 app.use(express.json()); 
@@ -32,6 +40,10 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ Configurer Morgan pour les logs HTTP et les enregistrer dans un fichier
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'utils/logs', 'access.log'), { flags: 'a' });
+app.use(morgan('combined', { stream: accessLogStream })); // Logs détaillés dans access.log
+app.use(morgan('dev')); // Logs dans la console
 
 
 app.use('/auth', authRoutes);
@@ -41,6 +53,13 @@ app.use('/History',historyrouter);
 app.use('/hotel',hotelrouter);
 app.use('/periode',perioderouter);
 app.use('/review',Review);
+app.use('/reservation',Reservation);
+
+// ✅ Logger les erreurs
+app.use((err, req, res, next) => {
+  loggerdev.error(`Erreur: ${err.message}`);
+  res.status(500).send('Erreur interne du serveur');
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

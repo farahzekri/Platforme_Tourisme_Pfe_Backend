@@ -5,7 +5,7 @@ const Admin=require('../Models/admin');
 const History =require('../Models/Historique');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-
+const logger=require('../utils/logger');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
@@ -184,11 +184,13 @@ const registerUser = async (req, res) => {
         const { nameAgence, email, password, phoneNumber, address, city, country, documents, typeAgence } = req.body;
 
         if (!nameAgence || !email || !password || !phoneNumber || !address || !city || !country || !documents || !typeAgence) {
+            logger.warn("Tous les champs sont requis.'");
             return res.status(400).json({ error: 'Tous les champs sont requis.' });
         }
 
         const existingUser = await B2B.findOne({ email });
         if (existingUser) {
+            logger.warn("Un utilisateur avec cet email existe déjà.'");
             return res.status(400).json({ error: 'Un utilisateur avec cet email existe déjà.' });
         }
 
@@ -207,11 +209,12 @@ const registerUser = async (req, res) => {
         await newb2b.save();
 
         sendEmailRegistre(email, { nameAgence });
-
+        logger.info(`Agence enregistrée avec succès. `);
         res.status(201).json({ message: 'Agence enregistrée avec succès.' });
 
     } catch (error) {
-        console.error('Error during registration:', error);
+
+        logger.error("Error during registration: " + error.message);
         res.status(500).json({ error: 'Erreur interne du serveur.' });
     }
 };
@@ -220,11 +223,13 @@ const addAgence = async (req, res) => {
         const { nameAgence, email, password, phoneNumber, address, city, country, documents, typeAgence } = req.body;
 
         if (!nameAgence || !email || !password || !phoneNumber || !address || !city || !country || !documents || !typeAgence) {
+            logger.warn("Tous les champs sont requis.");
             return res.status(400).json({ error: 'Tous les champs sont requis.' });
         }
 
         const existingUser = await B2B.findOne({ email });
         if (existingUser) {
+            logger.warn("Un utilisateur avec cet email existe déjà.");
             return res.status(400).json({ error: 'Un utilisateur avec cet email existe déjà.' });
         }
 
@@ -251,7 +256,7 @@ const addAgence = async (req, res) => {
         });
 
         await history.save();
-
+        logger.info(`Agence ajoutée avec succès par un administrateur.`);
         res.status(201).json({ 
             message: 'Agence ajoutée avec succès par un administrateur.',
             history 
@@ -259,6 +264,7 @@ const addAgence = async (req, res) => {
 
     } catch (error) {
         console.error('Error during agency creation:', error);
+        logger.error("Error during agency creation:" + error.message);
         res.status(500).json({ error: 'Erreur interne du serveur.' });
     }
 };
@@ -313,15 +319,18 @@ const updateB2BStatus = async (req, res) => {
         const { nameAgence, status, email, startDate, endDate, duration, amount } = req.body;
 
         if (req.user.role !== 'superadmin' ) {
+            logger.warn("Forbidden: Insufficient permissions");
             return res.status(403).json({ message: 'Forbidden: Insufficient permissions' });
         }
 
         if (!['en attente', 'approuvée', 'rejetée'].includes(status)) {
+            logger.warn( 'Invalid status. Allowed values are "pending", "approved", or "rejected".');
             return res.status(400).json({ message: 'Invalid status. Allowed values are "pending", "approved", or "rejected".' });
         }
 
         const b2b = await B2B.findOne({ nameAgence }).exec();
         if (!b2b) {
+            logger.warn(`B2B agency with name ${nameAgence} not found.`);
             return res.status(404).json({ message: `B2B agency with name "${nameAgence}" not found.` });
         }
 
@@ -343,9 +352,11 @@ const updateB2BStatus = async (req, res) => {
         }
 
         await b2b.save();
+        logger.info( `Status updated to "${status}" for agency "${b2b.nameAgence}".`);
         return res.status(200).json({ message: `Status updated to "${status}" for agency "${b2b.nameAgence}".` });
     } catch (error) {
         console.error('Error updating B2B status:', error);
+        logger.error("An error occurred while updating the status. Please try again later." + error.message);
         return res.status(500).json({ message: 'An error occurred while updating the status. Please try again later.' });
     }
 };
@@ -354,10 +365,12 @@ const updateB2b = async (req, res) => {
         const { nameAgence } = req.params;
         const { status, email, phoneNumber, address, city, country, typeAgence, contract }= req.body;
         if (req.user.role !== 'superadmin') {
+            logger.warn("Forbidden: Insufficient permissions");
             return res.status(403).json({ message: 'Forbidden: Insufficient permissions' });
         }
         const agence = await B2B.findOne({ nameAgence }).exec();
         if (!agence) {
+            logger.warn(`B2B agency with name "${nameAgence}" not found.`);
             return res.status(404).json({ message: `B2B agency with name "${nameAgence}" not found.` });
         }
         agence.email = email || agence.email;
@@ -383,9 +396,11 @@ const updateB2b = async (req, res) => {
             details: `L'agence ${nameAgence} a été mise à jour par ${req.user.username}`,
         });
         await history.save();
+        logger.info("Agence mise à jour avec succès");
         res.status(200).json({ message: "Agence mise à jour avec succès", agence });
     } catch (error) {
         console.error(error);
+        logger.error("Server error : " + error.message);
         res.status(500).json({ message: "Erreur lors de la mise à jour de l'agence" });
     }
 }
@@ -445,6 +460,7 @@ const deleteB2b = async (req, res) => {
         const { nameAgence } = req.params;
         const b2b = await B2B.findOne({ nameAgence });
         if (!b2b) {
+            logger.warn("Agence non trouvée");
             return res.status(404).json({ message: 'Agence non trouvée' });
         }
 
@@ -461,11 +477,12 @@ const deleteB2b = async (req, res) => {
 
         // Maintenant, supprimer l'agence
         await B2B.findOneAndDelete({ nameAgence });
-
+         logger.info(`L'agence ${nameAgence} a été supprimée avec succès.` );
         res.status(200).json({ message: `L'agence ${nameAgence} a été supprimée avec succès.` });
 
     } catch (error) {
         console.error(error);
+        logger.error("Erreur du serveur " + error.message);
         res.status(500).json({ message: 'Erreur du serveur' });
     }
 };
@@ -508,6 +525,7 @@ const sendResetPasswordEmail = async (req, res) => {
     const { newPassword } = req.body;
 
     if (!newPassword) {
+        logger.warn("Le nouveau mot de passe est requis.");
         return res.status(400).json({ error: 'Le nouveau mot de passe est requis.' });
     }
 
@@ -516,6 +534,7 @@ const sendResetPasswordEmail = async (req, res) => {
     if (!user) {
         user = await Admin.findOne({ email });
         if (!user) {
+            logger.warn("Utilisateur non trouvé.");
             return res.status(404).json({ error: "Utilisateur non trouvé." });
         }
     }
@@ -525,7 +544,7 @@ const sendResetPasswordEmail = async (req, res) => {
 
 
     await user.save();
-
+ logger.info(`Mot de passe mis à jour avec succès.`);
     res.status(200).json({ message: 'Mot de passe mis à jour avec succès.' });
 };
 
@@ -544,9 +563,10 @@ const updateB2BInfo = async (req, res) => {
         if (!updatedB2B) {
             return res.status(404).json({ message: "B2B introuvable" });
         }
-
+         logger.info(`Update  successfully `);
         res.status(200).json(updatedB2B);
     } catch (error) {
+         logger.error("Erreur lors de la mise à jour " + error.message);
         res.status(500).json({ message: "Erreur lors de la mise à jour", error });
     }
 };
@@ -557,12 +577,14 @@ const updateB2BPassword = async (req, res) => {
         // Vérifier si l'utilisateur existe
         const b2b = await B2B.findOne({ email });
         if (!b2b) {
+            logger.warn("B2B introuvable");
             return res.status(404).json({ message: "B2B introuvable" });
         }
 
         // Vérifier si l'ancien mot de passe est correct
         const isMatch = await bcrypt.compare(oldPassword, b2b.password);
         if (!isMatch) {
+            logger.warn("Ancien mot de passe incorrect");
             return res.status(400).json({ message: "Ancien mot de passe incorrect" });
         }
 
@@ -572,10 +594,11 @@ const updateB2BPassword = async (req, res) => {
 
         // Désactiver le middleware `pre('save')` en utilisant `updateOne`
         await B2B.updateOne({ email }, { $set: { password: hashedPassword } });
-
+         logger.info(`Mot de passe mis à jour avec succès`);
         res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
 
     } catch (error) {
+        logger.error("Erreur lors de la mise à jour du mot de passe " + error.message);
         res.status(500).json({ message: "Erreur lors de la mise à jour du mot de passe", error });
     }
 };

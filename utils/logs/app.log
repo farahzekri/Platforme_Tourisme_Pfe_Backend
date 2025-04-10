@@ -1,0 +1,72 @@
+{"level":"info","message":"Admin created successfully hiba 67f687648a0ef97c33e2b390","timestamp":"2025-04-09T14:42:44.793Z"}
+{"level":"info","message":"Admin trouvés ","timestamp":"2025-04-09T14:48:15.447Z"}
+{"level":"info","message":"Admin trouvés ","timestamp":"2025-04-09T14:51:00.876Z"}
+{"level":"info","message":"Admin trouvés ","timestamp":"2025-04-09T15:03:10.635Z"}
+{"level":"info","message":"Admin trouvés ","timestamp":"2025-04-09T15:53:03.050Z"}
+{"level":"error","message":"Erreur lors de la récupération des hôtels : Operation `hotels.find()` buffering timed out after 10000ms","timestamp":"2025-04-09T16:28:56.913Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-09T16:44:43.563Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T07:43:33.580Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T07:49:28.997Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T07:49:30.317Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T07:52:02.025Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T07:52:14.128Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T07:57:20.377Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:04:02.502Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:04:08.714Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:04:10.598Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:13:10.668Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:13:22.306Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:14:01.475Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:14:41.343Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:15:18.622Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:15:27.016Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:15:28.114Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:16:36.870Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:18:15.348Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:19:28.507Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:19:30.260Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:19:32.247Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:20:06.528Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:20:23.084Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:22:42.500Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:23:43.181Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:23:43.724Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:23:54.740Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:24:13.988Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:24:27.880Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:41:16.343Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:42:20.044Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:44:51.259Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:45:37.437Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:45:48.317Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:45:49.968Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T08:45:55.108Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T09:30:12.083Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T09:51:01.225Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T09:51:38.794Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T09:51:40.133Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-10T09:56:41.104Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T09:56:47.759Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T09:56:50.538Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T09:56:52.149Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T09:57:01.091Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T09:57:03.865Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T09:57:06.379Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:02:33.576Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:02:59.632Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:05:19.909Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:05:20.640Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:17:49.785Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:18:20.384Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:18:43.350Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:18:52.423Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:19:10.862Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:19:13.118Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:20:53.213Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-10T10:20:53.306Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T11:50:29.326Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T11:50:48.364Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T11:51:00.495Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T11:51:06.580Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T11:51:16.632Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-10T11:51:34.481Z"}

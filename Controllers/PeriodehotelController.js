@@ -1,6 +1,6 @@
 const Hotel = require('../Models/Hotel');
 const Periode = require('../Models/PeriodeHotel');
-
+const logger=require('../utils/logger');
 
 const createPeriodeHotel = async (req, res) => {
     try {
@@ -27,11 +27,12 @@ const createPeriodeHotel = async (req, res) => {
         await newPeriode.save();
         await Hotel.findByIdAndUpdate(hotelId, { $push: { periodes: newPeriode._id }, status: "active" });
 
-
+        logger.info(`Période ajoutée avec succès`);
         return res.status(201).json({ success: true, message: "Période ajoutée avec succès", periode: newPeriode });
 
     } catch (error) {
         console.error("Erreur lors de l'ajout de la période :", error);
+        logger.error("Erreur lors de l'ajout de la période " + error.message);
         return res.status(500).json({ success: false, message: "Erreur lors de l'ajout de la période" });
     }
 };
@@ -69,12 +70,15 @@ const getHotelAvailability = async (req, res) => {
         const { dateArrivee, dateDepart, adultes, enfants, agesEnfants, arrangementSelectionne, supplementsSelectionnes } = req.query;
 
         if (!dateArrivee || !dateDepart || !adultes) {
+             logger.warn("Veuillez fournir toutes les informations nécessaires.");
             return res.status(400).json({ message: "Veuillez fournir toutes les informations nécessaires." });
         }
 
         const hotel = await Hotel.findById(id);
-        if (!hotel) return res.status(404).json({ message: "Hôtel non trouvé" });
-
+        if (!hotel) {
+            logger.warn("Hôtel non trouvé");
+            return res.status(404).json({ message: "Hôtel non trouvé" });
+        }
         const dateDebut = new Date(dateArrivee);
         const dateFin = new Date(dateDepart);
 
@@ -171,6 +175,7 @@ const getHotelAvailability = async (req, res) => {
 
         res.json({ chambresDisponibles });
     } catch (error) {
+         logger.error("Erreur récupération disponibilité hôtel :" + error.message);
         console.error("Erreur récupération disponibilité hôtel :", error);
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
@@ -228,13 +233,6 @@ const searchHotels = async (req, res) => {
                     prixNuitTotal += prixNuit;
                 }
               
-             
-             
-
-
-
-
-              
                 console.log(`   ✅ Prix calculé pour cette période: ${prixNuitTotal}`);
 
                 prixTotal += prixNuitTotal * adultes;
@@ -273,6 +271,7 @@ const getAllPeriodeByHotelid = async (req, res) => {
         res.status(200).json(periodes);
     } catch (error) {
         console.error("Erreur lors de la récupération des périodes :", error);
+        logger.error("Erreur lors de la récupération des périodes : " + error.message);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -336,12 +335,14 @@ const getHotelsetprixmin = async (req, res) => {
         const filteredHotels = hotelsWithPrice.filter(h => h !== null);
 
         if (!filteredHotels.length) {
+              logger.warn("Aucun hôtel avec une période active trouvée");
             return res.json({ message: "Aucun hôtel avec une période active trouvée" });
         }
-
+         logger.info(`get hotle with prix `);
         res.json(filteredHotels);
     } catch (error) {
         console.error("Erreur lors de la récupération des hôtels :", error);
+         logger.error("Erreur lors de la récupération des hôtels : " + error.message);
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 };
@@ -353,6 +354,7 @@ const getHotelDetails = async (req, res) => {
         // Récupérer l'hôtel
         const hotel = await Hotel.findById(id);
         if (!hotel) {
+            logger.warn("Hôtel non trouvé");
             return res.status(404).json({ message: "Hôtel non trouvé" });
         }
 
@@ -390,10 +392,11 @@ const getHotelDetails = async (req, res) => {
             prixMinWeekday,
             prixMinWeekend,
         };
-
+        logger.info(`get hotel details`);
         res.json(hotelDetails);
     } catch (error) {
         console.error("Erreur lors de la récupération des détails de l'hôtel :", error);
+        logger.error("Erreur lors de la récupération des détails de l'hôtel : " + error.message);
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 };
@@ -403,11 +406,14 @@ const updateperiode = async (req, res) => {
         const updateData = req.body;
         const updatPriode = await Periode.findByIdAndUpdate(id, updateData, { new: true });
         if (!updatPriode) {
+            logger.warn("Periode non trouvé.");
             return res.status(404).json({ message: "Periode non trouvé." });
         }
+        logger.info(`Periode mis à jour avec succès.`);
         res.status(200).json({ message: "Periode mis à jour avec succès.", periode: updatPriode });
     } catch (error) {
         console.error(error);
+        logger.error("Erreur lors de la mise à jour de Periode. " + error.message);
         res.status(500).json({ message: "Erreur lors de la mise à jour de Periode." });
     }
 }
@@ -415,8 +421,10 @@ const getperiodebyidperiode = async (req, res) => {
     try {
         const { id } = req.params;
         const periode = await Periode.findById(id);
+        logger.info(`periode trouver`);
         res.status(200).json(periode);
     } catch (error) {
+        logger.error("Erreur lors de la récupération : " + error.message);
         res.status(500).json({ message: "Erreur lors de la récupération." });
     }
 };
@@ -427,6 +435,7 @@ const deletePeriode = async (req, res) => {
 
         const periode = await Periode.findById(id);
         if (!periode) {
+            logger.warn("Période non trouvée.");
             return res.status(404).json({ message: "Période non trouvée." });
         }
 
@@ -434,16 +443,18 @@ const deletePeriode = async (req, res) => {
         const hotelId = periode.hotelId;
         const hotel = await Hotel.findById(hotelId);
         if (!hotel) {
+            logger.warn("Hôtel non trouvé..");
             return res.status(404).json({ message: "Hôtel non trouvé." });
         }
 
         await Hotel.findByIdAndUpdate(hotelId, { $pull: { periodes: id } });
 
         await Periode.findByIdAndDelete(id);
-
+        logger.info(`Période supprimée avec succès.`);
         res.status(200).json({ message: "Période supprimée avec succès." });
     } catch (error) {
         console.error(error);
+        logger.error("Erreur lors de la suppression de la période." + error.message);
         res.status(500).json({ message: "Erreur lors de la suppression de la période." });
     }
 };
