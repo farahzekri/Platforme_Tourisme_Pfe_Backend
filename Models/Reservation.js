@@ -1,12 +1,12 @@
 const mongoose=require("mongoose");
 
 const GuestSchema =new mongoose.Schema({
-  civility: String, // Mr / Mme / Mlle
+  civility: String, 
   firstname: String,
   lastname: String,
 });
 const ChildSchema = new mongoose.Schema({
-    civility: String, // Fille / Garçon
+    civility: String,
     firstname: String,
     lastname: String,
     

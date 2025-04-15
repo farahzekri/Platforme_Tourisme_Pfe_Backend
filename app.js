@@ -29,8 +29,8 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.error('Erreur de connexion à MongoDB:', err));
 
   app.use(cors({
-    origin: "http://localhost:3000", // Spécifie le frontend
-    credentials: true, // Autorise l'envoi des cookies et headers d'authentification
+    origin: "http://localhost:3000", 
+    credentials: true, 
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
@@ -40,10 +40,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Configurer Morgan pour les logs HTTP et les enregistrer dans un fichier
+
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'utils/logs', 'access.log'), { flags: 'a' });
-app.use(morgan('combined', { stream: accessLogStream })); // Logs détaillés dans access.log
-app.use(morgan('dev')); // Logs dans la console
+app.use(morgan('combined', { stream: accessLogStream })); 
+app.use(morgan('dev')); 
 
 
 app.use('/auth', authRoutes);
@@ -55,7 +55,7 @@ app.use('/periode',perioderouter);
 app.use('/review',Review);
 app.use('/reservation',Reservation);
 
-// ✅ Logger les erreurs
+
 app.use((err, req, res, next) => {
   loggerdev.error(`Erreur: ${err.message}`);
   res.status(500).send('Erreur interne du serveur');
