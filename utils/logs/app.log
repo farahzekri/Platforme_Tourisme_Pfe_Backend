@@ -303,3 +303,256 @@
 {"level":"info","message":"get hotel details","timestamp":"2025-04-15T08:04:41.521Z"}
 {"level":"info","message":"get hotel details","timestamp":"2025-04-15T08:04:43.764Z"}
 {"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-15T08:05:18.158Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-15T12:49:50.311Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-15T12:58:28.305Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-15T12:58:45.056Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-15T13:01:31.534Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T10:21:58.284Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T10:23:20.110Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T10:23:25.438Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T10:27:02.537Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T10:29:08.316Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T11:00:10.068Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:00:13.248Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:00:14.878Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T11:01:14.872Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T11:02:30.252Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:02:32.109Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:02:34.409Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T11:02:59.784Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T11:27:30.784Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:27:34.549Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:27:39.114Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T11:28:10.387Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T11:45:40.871Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:45:42.813Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T11:45:46.757Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T11:46:33.994Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T12:02:29.016Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T12:02:31.106Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T12:02:32.619Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T12:03:12.054Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T13:30:15.709Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T13:30:17.648Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T13:30:20.817Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T13:31:04.645Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T13:45:44.800Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T13:45:47.873Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T13:45:53.176Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T13:47:01.069Z"}
+{"level":"warn","message":"Aucun hôtel trouvé pour ce B2B.","timestamp":"2025-04-16T14:56:27.662Z"}
+{"level":"warn","message":"Aucun hôtel trouvé pour ce B2B.","timestamp":"2025-04-16T14:56:28.771Z"}
+{"level":"warn","message":"Aucun hôtel trouvé pour ce B2B.","timestamp":"2025-04-16T14:56:30.876Z"}
+{"level":"warn","message":"Aucun hôtel trouvé pour ce B2B.","timestamp":"2025-04-16T14:56:34.993Z"}
+{"level":"info","message":"Hôtel ajouté avec succès","timestamp":"2025-04-16T14:59:24.555Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T14:59:27.751Z"}
+{"level":"info","message":"Hôtel ajouté avec succès","timestamp":"2025-04-16T15:01:41.022Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:01:44.414Z"}
+{"level":"info","message":"Hôtel ajouté avec succès","timestamp":"2025-04-16T15:03:38.693Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:03:42.037Z"}
+{"level":"info","message":"Hôtel ajouté avec succès","timestamp":"2025-04-16T15:05:50.068Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:05:53.210Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:06:52.778Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:07:34.989Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:08:31.728Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:08:37.147Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:09:22.884Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:09:22.895Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:09:22.899Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:09:27.722Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:10:11.890Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:11:30.999Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:11:42.005Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:11:46.125Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:11:58.884Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:11:58.905Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:11:58.909Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:11:58.911Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:12:02.453Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:13:16.390Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:13:59.586Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:14:06.339Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:14:24.151Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:14:24.155Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:14:24.172Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:14:27.741Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:15:15.868Z"}
+{"level":"info","message":"Période ajoutée avec succès","timestamp":"2025-04-16T15:15:54.087Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:16:00.856Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:16:14.198Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:16:14.243Z"}
+{"level":"info","message":"Disponibilité mise à jour avec succès","timestamp":"2025-04-16T15:16:14.461Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T15:16:18.331Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T15:16:23.012Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:16:34.788Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:16:36.668Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:17:11.288Z"}
+{"level":"info","message":"Avis ajouté avec succès","timestamp":"2025-04-16T15:17:21.617Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:17:27.680Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:17:28.935Z"}
+{"level":"info","message":"Avis ajouté avec succès","timestamp":"2025-04-16T15:17:37.819Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:17:40.170Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:17:42.048Z"}
+{"level":"info","message":"Avis ajouté avec succès","timestamp":"2025-04-16T15:17:49.262Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:17:51.598Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:17:52.502Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T15:18:00.011Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T15:18:53.875Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:18:55.490Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:18:57.557Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T15:20:05.393Z"}
+{"level":"error","message":"Erreur lors de la récupération des hôtels : Operation `hotels.find()` buffering timed out after 10000ms","timestamp":"2025-04-16T15:45:29.050Z"}
+{"level":"error","message":"Erreur lors de la récupération des hôtels : Operation `hotels.find()` buffering timed out after 10000ms","timestamp":"2025-04-16T15:46:51.541Z"}
+{"level":"error","message":"Erreur lors de la récupération des hôtels : Operation `hotels.find()` buffering timed out after 10000ms","timestamp":"2025-04-16T15:47:21.294Z"}
+{"level":"error","message":"Erreur lors de la récupération des hôtels : Operation `hotels.find()` buffering timed out after 10000ms","timestamp":"2025-04-16T15:47:33.868Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T15:48:01.940Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T15:48:02.968Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:48:05.120Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:48:06.944Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T15:48:37.728Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T15:57:27.086Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:57:28.644Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T15:57:32.111Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T15:58:05.477Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:05:08.898Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:05:21.975Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:05:23.539Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T16:05:49.170Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:15:38.433Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:15:40.017Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:15:42.130Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T16:16:07.777Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:20:10.043Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:20:15.921Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:20:17.639Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T16:20:41.710Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:23:38.255Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:23:40.438Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:23:42.063Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T16:24:10.352Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:30:14.929Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:30:17.086Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:30:19.156Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T16:30:46.971Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:38:52.480Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:38:54.420Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:38:55.885Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T16:39:37.661Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:45:32.447Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-16T16:45:35.432Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:45:36.594Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-16T16:45:37.793Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-16T16:46:00.119Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T16:59:15.802Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T17:14:09.171Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T20:27:00.477Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-16T20:27:19.511Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-17T08:21:13.548Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-17T09:24:01.292Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-17T09:27:30.705Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T09:27:36.339Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:51:22.033Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:52:13.399Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:54:10.836Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:54:36.445Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:55:23.630Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:55:52.060Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:55:53.391Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:56:10.033Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:56:46.167Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:58:55.772Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T11:59:59.830Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:00:12.241Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:00:23.670Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:01:07.506Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:01:40.127Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:01:53.205Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:01:56.083Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:02:14.963Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:03:08.657Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:03:52.476Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:06:04.403Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:08:05.043Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:08:57.788Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:09:10.894Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:09:41.584Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:09:47.112Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:09:55.320Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:10:13.831Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:10:38.988Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:11:03.794Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:11:14.795Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:11:43.496Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:12:35.511Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:13:46.622Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:13:56.817Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:14:16.188Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:14:37.086Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:14:59.538Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:15:15.810Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:16:18.453Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:16:44.562Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:16:56.841Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:17:21.901Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:18:04.192Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:18:47.358Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:22:34.786Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:23:06.019Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:23:07.067Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:24:12.688Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:26:41.606Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:26:49.337Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:27:00.202Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:27:27.559Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:27:28.117Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:27:28.438Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:27:32.597Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:27:40.334Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:28:03.709Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:28:06.682Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:28:12.686Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:28:15.541Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:28:18.365Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:29:38.097Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:29:42.871Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:29:50.241Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:32:30.798Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:34:11.303Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:35:50.291Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:36:19.569Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:37:31.050Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:37:52.424Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:38:59.328Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:56:35.265Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:58:46.025Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T12:59:59.219Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:04:08.922Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:05:14.970Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:05:29.598Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:05:54.008Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:05:58.199Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:06:28.284Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:07:10.019Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:10:15.283Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:12:01.727Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:13:05.330Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:13:37.642Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:14:07.113Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:16:19.858Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:16:44.020Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:17:48.621Z"}
+{"level":"info","message":"hotel trouver","timestamp":"2025-04-17T13:56:55.130Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-17T13:56:56.886Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-17T13:56:59.574Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-17T13:57:01.036Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-17T14:52:58.792Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-17T14:53:00.642Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-17T14:53:02.885Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-17T14:53:52.800Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-17T14:54:02.588Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-17T14:54:13.026Z"}
+{"level":"info","message":"get hotle with prix ","timestamp":"2025-04-17T15:23:02.605Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-17T15:23:05.003Z"}
+{"level":"info","message":"get hotel details","timestamp":"2025-04-17T15:23:07.912Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-17T15:23:40.286Z"}
+{"level":"info","message":"Réservation ajoutée avec succès","timestamp":"2025-04-17T15:23:55.282Z"}

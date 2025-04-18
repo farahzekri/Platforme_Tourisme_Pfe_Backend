@@ -4,6 +4,7 @@ const API_KEY = process.env.KONNECT_API_KEY;
 const RECEIVER_WALLET_ID = process.env.KONNECT_WALLET_ID;
 const mongoose = require("mongoose");
 const axios = require("axios");
+const Hotel = require("../Models/Hotel");
 const logger=require('../utils/logger');
 const addReservation = async (req, res) => {
     try {
@@ -68,7 +69,7 @@ const addReservation = async (req, res) => {
           orderId: reservationId,
           successUrl: "http://localhost:3000/success",
           failUrl: "http://localhost:3000/failure",
-          webhook: "http://localhost:5000/reservation/notify",
+          webhook: " https://ea5c-102-159-199-203.ngrok-free.app/reservation/notify",
           silentWebhook: true,
           metadata: {
             reservationId 
@@ -82,42 +83,116 @@ const addReservation = async (req, res) => {
       );
   
       const paymentUrl = response.data.payUrl;
+      const paymentRef = response.data.paymentRef; // à adapter si différent
+
+   
+    await Reservation.findByIdAndUpdate(reservationId, {
+      paymentRef: paymentRef
+    });
       res.json({ paymentUrl });
     } catch (error) {
       console.error("Erreur de paiement :", error?.response?.data || error.message);
       res.status(500).json({ error: "Erreur lors de la création du paiement" });
     }
   };
-  const notifyPayment = async (req, res) => {
+  const notifyPaymentGet = async (req, res) => {
     try {
-      const { status, metadata } = req.body;
+      const { payment_ref } = req.query;
   
-      console.log("Webhook reçu:", req.body);
+      console.log("Webhook GET reçu:", req.query);
   
-      const reservationId = metadata?.reservationId;
-  
-      if (!reservationId || !status) {
-        return res.status(400).send("Données invalides");
+      if (!payment_ref) {
+        return res.status(400).send("payment_ref manquant");
       }
   
-      const newStatus = status === "success" ? "payé" : "échoué";
+      const reservation = await Reservation.findOne({ paymentRef: payment_ref });
   
-      const updated = await Reservation.findByIdAndUpdate(reservationId, {
-        paymentStatus: newStatus
-      });
-  
-      if (!updated) {
+      if (!reservation) {
         return res.status(404).send("Réservation non trouvée");
       }
   
-      res.status(200).send("OK");
+      // Vérifiez si le paiement a déjà été traité
+      if (reservation.paymentStatus === "payé") {
+        return res.status(200).send("Paiement déjà traité");
+      }
+  
+      // Marquez le paiement comme payé
+      reservation.paymentStatus = "payé";
+      await reservation.save();
+  
+      // Mettez à jour la disponibilité des chambres
+      const hotel = await Hotel.findById(reservation.hotelId);
+      if (!hotel) {
+        return res.status(404).send("Hôtel non trouvé");
+      }
+  
+      const roomType = reservation.roomType;
+      const currentAvailability = hotel.roomAvailability.get(roomType) || 0;
+      hotel.roomAvailability.set(roomType, currentAvailability - 1);
+      await hotel.save();
+  
+      res.status(200).send("Mise à jour avec succès");
     } catch (error) {
-      console.error("Erreur dans le webhook :", error.message);
+      console.error("Erreur webhook GET:", error.message);
+      res.status(500).send("Erreur serveur");
+    }
+  };
+  
+  
+  const getReservationsByHotel = async (req, res) => {
+    try {
+      const { hotelId } = req.params;
+      const reservations = await Reservation.find({ hotelId });
+      res.status(200).json(reservations);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des réservations de l'hôtel :", error);
+      res.status(500).send("Erreur serveur");
+    }
+  };
+  const getReservationsByB2B = async (req, res) => {
+    try {
+      const { b2bId } = req.params;
+  
+      const reservations = await Reservation.aggregate([
+        {
+          $lookup: {
+            from: "hotels", // Nom de la collection des hôtels
+            localField: "hotelId",
+            foreignField: "_id",
+            as: "hotelDetails"
+          }
+        },
+        { $unwind: "$hotelDetails" },
+        { $match: { "hotelDetails.b2bId": new mongoose.Types.ObjectId(b2bId) } },
+        {
+          $project: {
+            reserverFirstname: 1,
+            reserverLastname: 1,
+            reserverEmail: 1,
+            reserverPhone: 1,
+            roomType: 1,
+            dateArrivee: 1,
+            dateDepart: 1,
+            arrangement: 1,
+            totalPrice: 1,
+            paymentStatus: 1,
+            hotelName: "$hotelDetails.name",
+            hotelCity: "$hotelDetails.city"
+          }
+        }
+      ]);
+  
+      res.status(200).json(reservations);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des réservations du B2B :", error);
       res.status(500).send("Erreur serveur");
     }
   };
   module.exports = {
      addReservation,
      createPayment,
-     notifyPayment
+     notifyPaymentGet,
+     getReservationsByHotel,
+     getReservationsByB2B,
+
      };

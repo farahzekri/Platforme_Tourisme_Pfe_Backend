@@ -1,5 +1,5 @@
 const mongoose=require("mongoose");
-
+const Hotel =require("../Models/Hotel");
 const GuestSchema =new mongoose.Schema({
   civility: String, 
   firstname: String,
@@ -33,7 +33,8 @@ const ChildSchema = new mongoose.Schema({
     totalPrice: Number,
     paymentMethod: String, 
     paymentStatus: { type: String, default: "pending" },
+    paymentRef: { type: String },
     createdAt: { type: Date, default: Date.now }
   });
-  
+
   module.exports = mongoose.model("Reservation", ReservationSchema);
